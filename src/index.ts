@@ -1,6 +1,9 @@
 import { outro, select, isCancel, intro } from '@clack/prompts';
 import { wm } from './wm'
 import { ime } from './ime';
+import { monkey } from './monkey';
+
+const args = process.argv.slice(2)
 
 const COMMANDS = [
   {
@@ -11,6 +14,10 @@ const COMMANDS = [
     value: 'ime',
     hint: 'manage input method, keyboard, etc'
   },
+  {
+    value: 'monkey',
+    hint: 'start or stop monkey test'
+  },
 ]
 
 const openCmd = async (cmd: string) => {
@@ -20,7 +27,12 @@ const openCmd = async (cmd: string) => {
   } else if (cmd == "ime") {
     intro('adb ime helper')
     ime()
-  } else {
+  }
+  else if (cmd == "monkey") {
+    intro('adb monkey helper')
+    monkey(args[1])
+  }
+  else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
       message: 'Select a command',
@@ -32,6 +44,5 @@ const openCmd = async (cmd: string) => {
 }
 
 export const startCli = () => {
-  const args = process.argv.slice(2)
   openCmd(args[0])
 }
