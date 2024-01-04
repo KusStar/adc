@@ -4,6 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
 import { isCancel, outro, select, text } from '@clack/prompts'
+import prompts from 'prompts'
 
 interface Config {
   name: string
@@ -194,10 +195,13 @@ export async function wm(goBack: () => void) {
     options.push({ value: Op.IMPORT, label: 'import config', hint: 'from json' })
   }
 
-  const selectedConfig = await select({
-    message: 'Pick your wm config',
-    options,
-  }) as (Config | string)
+  const { value: selectedConfig } = await prompts({
+    type: 'autocomplete',
+    name: 'value',
+    message: 'Select package',
+    choices: options.map(it => ({ title: it.label, value: it.value })),
+    suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
+  })
 
   if (typeof selectedConfig === 'string') {
     switch (selectedConfig) {
