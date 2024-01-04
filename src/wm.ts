@@ -1,4 +1,3 @@
-
 import { outro, text, select, isCancel } from '@clack/prompts';
 import { execSync } from 'child_process'
 

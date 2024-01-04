@@ -1,4 +1,4 @@
-import { exec, execSync } from 'child_process'
+import { execSync } from 'child_process'
 import { outro, select, isCancel, confirm, note } from '@clack/prompts';
 
 const START_CMD = (packageName: string) => `adb shell "monkey -p ${packageName} -v -v -v -s 1000 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --kill-process-after-error --pct-appswitch 30 --pct-touch 45 --pct-syskeys 0 --pct-motion 10 --pct-anyevent 10 --pct-flip 5 --pct-trackball 0 --pct-pinchzoom 0 --pct-nav 0 --pct-majornav 0 --pct-permission 0 --throttle 500 1200000000 2>&1 | tee /sdcard/logcat/monkey.log.txt "`
@@ -25,9 +25,11 @@ const exitHandler = async () => {
   outro('exited')
 }
 
-[`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`].forEach((eventType) => {
-  process.on(eventType, exitHandler)
-})
+const listenExit = () => {
+  [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`].forEach((eventType) => {
+    process.on(eventType, exitHandler)
+  })
+}
 
 export const monkey = async (cmd?: string) => {
   let selected
@@ -53,6 +55,8 @@ export const monkey = async (cmd?: string) => {
 
   if (isCancel(selected)) return outro('cancelled')
 
+  listenExit()
+
   if (selected === 'start') {
     const packageName = getFocusedPackage().toString().trim()
     note(`start monkey test for ${packageName}`);
@@ -63,7 +67,7 @@ export const monkey = async (cmd?: string) => {
       execSync(STOP_CMD, {
         stdio: 'ignore'
       })
-    } catch (error) {}
+    } catch (error) { }
     outro('monkey stopped')
   }
 }
