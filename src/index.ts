@@ -71,7 +71,7 @@ async function openCmd(cmd?: string) {
   else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
-      message: 'Commands',
+      message: 'adc',
       options,
     }) as string
     if (isCancel(selected))
