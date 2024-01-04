@@ -1,7 +1,7 @@
-import { execSync } from 'child_process'
-import { outro, select, isCancel } from '@clack/prompts';
+import { execSync } from 'node:child_process'
+import { isCancel, outro, select } from '@clack/prompts'
 
-export const ime = async (goBack: () => void) => {
+export async function ime(goBack: () => void) {
   const imes = execSync('adb shell ime list -s').toString().trim().split('\n')
 
   const options = imes.map(it => ({ value: it, label: it }))
@@ -14,13 +14,15 @@ export const ime = async (goBack: () => void) => {
 
   const selected = await select({
     message: 'Select a ime',
-    options
+    options,
   })
 
-  if (isCancel(selected)) return outro('No ime selected')
+  if (isCancel(selected))
+    return outro('No ime selected')
 
-  if (selected === 'back') return goBack()
-  
+  if (selected === 'back')
+    return goBack()
+
   execSync(`adb shell ime set ${selected}`)
 
   outro(`ime set to ${selected}`)

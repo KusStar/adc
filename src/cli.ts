@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import { startCli } from "./index";
+import { startCli } from './index'
 
-startCli();
+startCli()
