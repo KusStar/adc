@@ -2,7 +2,8 @@ import { outro, select, isCancel, intro, cancel } from '@clack/prompts';
 import { wm } from './wm'
 import { ime } from './ime';
 import { monkey } from './monkey';
-import { settings } from './settings';
+import { amStart } from './am-start';
+import { amStop } from './am-stop';
 import { isAdbConnected } from './utils';
 
 const args = process.argv.slice(2)
@@ -21,12 +22,20 @@ const COMMANDS = [
     hint: 'start or stop monkey test'
   },
   {
-    value: 'settings',
-    hint: 'open settings page'
+    value: 'am-start',
+    hint: 'activity manager start actions'
+  },
+  {
+    value: 'am-stop',
+    hint: 'activity manager stop actions'
   },
 ]
 
-const openCmd = async (cmd: string) => {
+const goBack = () => {
+  openCmd()
+}
+
+const openCmd = async (cmd?: string) => {
   if (!isAdbConnected()) {
     intro('adc - adb helper')
     return cancel('adb not connected')
@@ -34,16 +43,19 @@ const openCmd = async (cmd: string) => {
 
   if (cmd == 'wm') {
     intro('adb wm helper')
-    wm()
+    wm(goBack)
   } else if (cmd == "ime") {
     intro('adb ime helper')
-    ime()
+    ime(goBack)
   } else if (cmd == "monkey") {
     intro('adb monkey helper')
-    monkey(args[1])
-  } else if (cmd == "settings" || cmd == "setting") {
-    intro('adb settings helper')
-    settings(args[1])
+    monkey(goBack, args[1])
+  } else if (cmd == 'am-start') {
+    intro('adb am start helper')
+    amStart(goBack)
+  } else if (cmd == 'am-stop') {
+    intro('adb am stop helper')
+    amStop(goBack)
   } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({

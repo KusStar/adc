@@ -1,13 +1,11 @@
 import { execSync } from 'child_process'
 import { outro, select, isCancel, confirm, note } from '@clack/prompts';
+import { getCurrentPackage } from './utils';
 
 const START_CMD = (packageName: string) => `adb shell "monkey -p ${packageName} -v -v -v -s 1000 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --kill-process-after-error --pct-appswitch 30 --pct-touch 45 --pct-syskeys 0 --pct-motion 10 --pct-anyevent 10 --pct-flip 5 --pct-trackball 0 --pct-pinchzoom 0 --pct-nav 0 --pct-majornav 0 --pct-permission 0 --throttle 500 1200000000 2>&1 | tee /sdcard/logcat/monkey.log.txt "`
 
 const STOP_CMD = "adb shell kill $(adb shell pgrep monkey)"
 
-const getFocusedPackage = () => {
-  return execSync(`adb shell dumpsys activity top | grep "ACTIVITY" | tail -n 1 | awk '{print $2}' | cut -d '/' -f1`)
-}
 
 let once = false
 
@@ -26,12 +24,18 @@ const exitHandler = async () => {
 }
 
 const listenExit = () => {
-  [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`].forEach((eventType) => {
+  const events = [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`]
+  events.forEach((eventType) => {
     process.on(eventType, exitHandler)
   })
+  return () => {
+    events.forEach((eventType) => {
+      process.removeListener(eventType, exitHandler)
+    })
+  }
 }
 
-export const monkey = async (cmd?: string) => {
+export const monkey = async (goBack: () => void, cmd?: string) => {
   let selected
   if (cmd === 'start' || cmd === 'stop') {
     selected = cmd
@@ -48,6 +52,11 @@ export const monkey = async (cmd?: string) => {
           value: 'stop',
           label: 'stop',
           hint: 'stop monkey test'
+        },
+        {
+          value: 'back',
+          label: 'back',
+          hint: 'back to main menu'
         }
       ]
     })
@@ -55,10 +64,10 @@ export const monkey = async (cmd?: string) => {
 
   if (isCancel(selected)) return outro('cancelled')
 
-  listenExit()
+  const removeListeners = listenExit()
 
   if (selected === 'start') {
-    const packageName = getFocusedPackage().toString().trim()
+    const packageName = await getCurrentPackage()
     note(`start monkey test for ${packageName}`);
     execSync(START_CMD(packageName))
   } else if (selected === 'stop') {
@@ -69,5 +78,8 @@ export const monkey = async (cmd?: string) => {
       })
     } catch (error) { }
     outro('monkey stopped')
+  } else if (selected === 'back') {
+    removeListeners()
+    goBack()
   }
 }

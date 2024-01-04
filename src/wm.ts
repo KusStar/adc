@@ -27,7 +27,8 @@ const enum Op {
   DUMP = 'dump',
   EDIT = 'edit',
   DELETE = 'delete',
-  IMPORT = 'import'
+  IMPORT = 'import',
+  BACK = 'back'
 }
 
 function runConfig(config = "") {
@@ -152,7 +153,7 @@ async function deleteConfig(wmConfigs: Config[]) {
 }
 
 
-export const wm = async () => {
+export const wm = async (goBack: () => void) => {
   const PERSIST_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../storage')
 
   await storage.init({
@@ -173,7 +174,8 @@ export const wm = async () => {
     options.push(
       { value: Op.DUMP, label: 'dump', hint: 'dump from current' },
       { value: Op.EDIT, label: 'edit', hint: 'edit wm config' },
-      { value: Op.DELETE, label: 'delete', hint: 'delete wm config' }
+      { value: Op.DELETE, label: 'delete', hint: 'delete wm config' },
+      { value: Op.BACK, label: 'back', hint: 'go back' }
     )
   } else {
     options.push({ value: Op.IMPORT, label: 'import config', hint: 'from json' })
@@ -200,7 +202,7 @@ export const wm = async () => {
 
       case Op.SEPARATOR:
         outro('Just a separator');
-        wm();
+        wm(goBack);
         break;
 
       case Op.RESET:
@@ -213,6 +215,10 @@ export const wm = async () => {
 
       case Op.DUMP:
         dumpConfig(wmConfigs)
+        break;
+
+      case Op.BACK:
+        goBack()
         break;
 
       default:
