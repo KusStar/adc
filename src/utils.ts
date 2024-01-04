@@ -22,9 +22,9 @@ export const stopApp = (packageName: string) => {
 
 export const adb = (cmd: string, deviceIds?: string[]) => {
   if (deviceIds && deviceIds.length > 1) {
-    return exec(`adb -s ${deviceIds.join(' -s ')} ${cmd}`)
+    return execSync(`adb -s ${deviceIds.join(' -s ')} ${cmd}`)
   }
-  return exec(`adb ${cmd}`)
+  return execSync(`adb ${cmd}`)
 }
 
 export const adbAsync = (cmd: string, deviceIds?: string[]) => {

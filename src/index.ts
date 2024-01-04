@@ -29,6 +29,9 @@ const COMMANDS = [
     value: 'wm',
     hint: 'manage window manager config, size, density, etc'
   },
+  {
+    value: 'exit',
+  }
 ]
 
 const goBack = () => {
@@ -56,7 +59,10 @@ const openCmd = async (cmd?: string) => {
   } else if (cmd == 'am-stop') {
     intro('adb am stop helper')
     amStop(goBack)
-  } else {
+  } else if (cmd == 'exit') {
+    outro('exited')
+  }
+  else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
       message: 'Commands',
