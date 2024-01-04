@@ -198,7 +198,7 @@ export async function wm(goBack: () => void) {
   const { value: selectedConfig } = await prompts({
     type: 'autocomplete',
     name: 'value',
-    message: 'Select package',
+    message: 'Select wm config',
     choices: options.map(it => ({ title: it.label, value: it.value })),
     suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
