@@ -10,8 +10,12 @@ const args = process.argv.slice(2)
 
 const COMMANDS = [
   {
-    value: 'wm',
-    hint: 'manage window manager config, size, density, etc'
+    value: 'am-start',
+    hint: 'activity manager start actions'
+  },
+  {
+    value: 'am-stop',
+    hint: 'activity manager stop actions'
   },
   {
     value: 'ime',
@@ -22,12 +26,8 @@ const COMMANDS = [
     hint: 'start or stop monkey test'
   },
   {
-    value: 'am-start',
-    hint: 'activity manager start actions'
-  },
-  {
-    value: 'am-stop',
-    hint: 'activity manager stop actions'
+    value: 'wm',
+    hint: 'manage window manager config, size, density, etc'
   },
 ]
 
@@ -59,7 +59,7 @@ const openCmd = async (cmd?: string) => {
   } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
-      message: 'Select a command',
+      message: 'Commands',
       options
     }) as string
     if (isCancel(selected)) return outro('No command selected')

@@ -19,8 +19,9 @@ const exitHandler = async () => {
   if (value) {
     execSync(STOP_CMD)
     outro('monkey stopped')
+  } else {
+    outro('exited')
   }
-  outro('exited')
 }
 
 const listenExit = () => {
@@ -68,7 +69,7 @@ export const monkey = async (goBack: () => void, cmd?: string) => {
 
   if (selected === 'start') {
     const packageName = await getCurrentPackage()
-    note(`start monkey test for ${packageName}`);
+    note(`running monkey test for ${packageName}`);
     execSync(START_CMD(packageName))
   } else if (selected === 'stop') {
     once = true
