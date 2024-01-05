@@ -5,3 +5,49 @@ export { amStart } from './am-start'
 export { amStop } from './am-stop'
 export { installOrUninstall } from './install-or-uninstall'
 export { rotation } from './rotation'
+
+export type CmdValue = 'am-start'
+  | 'am-stop'
+  | 'install/uninstall'
+  | 'ime'
+  | 'monkey'
+  | 'rotation'
+  | 'wm'
+  | 'exit'
+
+export const COMMANDS: {
+  value: CmdValue
+  hint?: string
+}[] = [
+  {
+    value: 'am-start',
+    hint: 'activity manager start actions',
+  },
+  {
+    value: 'am-stop',
+    hint: 'activity manager stop actions',
+  },
+  {
+    value: 'install/uninstall',
+    hint: 'install or uninstall apk',
+  },
+  {
+    value: 'ime',
+    hint: 'manage input method, keyboard, etc',
+  },
+  {
+    value: 'monkey',
+    hint: 'start or stop monkey test',
+  },
+  {
+    value: 'rotation',
+    hint: 'manage screen rotation',
+  },
+  {
+    value: 'wm',
+    hint: 'manage window manager config, size, density, etc',
+  },
+  {
+    value: 'exit',
+  },
+]

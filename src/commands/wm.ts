@@ -10,26 +10,16 @@ interface Config {
   value: string
 }
 
+type Op = 'separator' | 'create' | 'reset' | 'dump' | 'edit' | 'delete' | 'import' | 'back'
+
 type Option = {
   value: Config
   label: string
   hint?: string
 } | {
-  value: string
+  value: Op
   label: string
   hint?: string
-}
-
-// eslint-disable-next-line no-restricted-syntax
-const enum Op {
-  SEPARATOR = 'separator',
-  CREATE = 'create',
-  RESET = 'reset',
-  DUMP = 'dump',
-  EDIT = 'edit',
-  DELETE = 'delete',
-  IMPORT = 'import',
-  BACK = 'back',
 }
 
 function runConfig(config = '', device?: string) {
@@ -191,20 +181,20 @@ export async function wm(device: string | undefined, goBack: () => void) {
   const options: Option[] = wmConfigs.reverse().map(it => ({ value: it, label: it.name, hint: it.value }))
 
   options.push(
-    { value: Op.SEPARATOR, label: '------------' },
-    { value: Op.CREATE, label: 'create', hint: 'create new wm config' },
-    { value: Op.RESET, label: 'reset', hint: 'reset wm to default' },
+    { value: 'separator', label: '------------' },
+    { value: 'create', label: 'create', hint: 'create new wm config' },
+    { value: 'reset', label: 'reset', hint: 'reset wm to default' },
   )
 
   if (wmConfigs.length > 0) {
     options.push(
-      { value: Op.DUMP, label: 'dump', hint: 'dump from current' },
-      { value: Op.EDIT, label: 'edit', hint: 'edit wm config' },
-      { value: Op.DELETE, label: 'delete', hint: 'delete wm config' },
-      { value: Op.BACK, label: 'back', hint: 'go back' },
+      { value: 'dump', label: 'dump', hint: 'dump from current' },
+      { value: 'edit', label: 'edit', hint: 'edit wm config' },
+      { value: 'delete', label: 'delete', hint: 'delete wm config' },
+      { value: 'back', label: 'back', hint: 'go back' },
     )
   } else {
-    options.push({ value: Op.IMPORT, label: 'import config', hint: 'from json' })
+    options.push({ value: 'import', label: 'import config', hint: 'from json' })
   }
 
   const { value: selectedConfig } = await prompts({
@@ -225,37 +215,37 @@ export async function wm(device: string | undefined, goBack: () => void) {
   })
 
   if (typeof selectedConfig === 'string') {
-    switch (selectedConfig) {
-      case Op.CREATE:
+    switch (selectedConfig as Op) {
+      case 'create':
         createConfig(wmConfigs)
         break
 
-      case Op.EDIT:
+      case 'edit':
         editConfig(wmConfigs)
         break
 
-      case Op.DELETE:
+      case 'delete':
         deleteConfig(wmConfigs)
         break
 
-      case Op.SEPARATOR:
+      case 'separator':
         outro('Just a separator')
         wm(device, goBack)
         break
 
-      case Op.RESET:
+      case 'reset':
         adb('shell wm reset', device)
         break
 
-      case Op.IMPORT:
+      case 'import':
         importConfig()
         break
 
-      case Op.DUMP:
+      case 'dump':
         dumpConfig(wmConfigs)
         break
 
-      case Op.BACK:
+      case 'back':
         goBack()
         break
 
