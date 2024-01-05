@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { confirm, isCancel, note, outro, select } from '@clack/prompts'
-import { adb, getCurrentPackage } from './utils'
+import { adb, getCurrentPackage } from '../utils'
 
 function START_CMD(packageName: string) {
   // eslint-disable-next-line style/max-len

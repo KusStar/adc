@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
 import { isCancel, log, outro, select, text } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb } from './utils'
+import { adb } from '../utils'
 
 interface Config {
   name: string

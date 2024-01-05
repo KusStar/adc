@@ -1,14 +1,16 @@
 import process from 'node:process'
 import { cancel, intro, outro } from '@clack/prompts'
 import prompts from 'prompts'
-import { wm } from './wm'
-import { ime } from './ime'
-import { monkey } from './monkey'
-import { amStart } from './am-start'
-import { amStop } from './am-stop'
+import {
+  amStart,
+  amStop,
+  ime,
+  installOrUninstall,
+  monkey,
+  rotation,
+  wm,
+} from './commands'
 import { checkDevices, getAdbDevices } from './utils'
-import { installOrUninstall } from './install-or-uninstall'
-import { rotation } from './rotation'
 
 const args = process.argv.slice(2)
 

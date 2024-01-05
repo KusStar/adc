@@ -1,6 +1,6 @@
 import { log, outro } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb } from './utils'
+import { adb } from '../utils'
 
 export async function rotation(device: string | undefined, goBack: () => void) {
   const { value } = await prompts({

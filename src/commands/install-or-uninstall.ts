@@ -1,6 +1,6 @@
 import { isCancel, outro, select } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, getInstalledPackages } from './utils'
+import { adb, getInstalledPackages } from '../utils'
 
 export async function installOrUninstall(device: string | undefined, goBack: () => void) {
   const selected = await select({

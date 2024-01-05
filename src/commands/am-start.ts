@@ -1,6 +1,6 @@
 import { confirm, log, outro } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, getInstalledPackages, stopApp } from './utils'
+import { adb, getInstalledPackages, stopApp } from '../utils'
 
 const stopSetting = (device?: string) => stopApp('com.android.settings', device)
 
