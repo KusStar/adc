@@ -1,6 +1,6 @@
 import { confirm, log, outro } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, checkDevices, stopApp } from './utils'
+import { adb, checkDevices, getInstalledPackages, stopApp } from './utils'
 
 const stopSetting = (device?: string) => stopApp('com.android.settings', device)
 
@@ -14,7 +14,7 @@ interface StartItem {
 const START_LIST: StartItem[] = [
   {
     value: 'app',
-    label: 'app',
+    label: 'installed app',
     hint: 'Open application by package name',
     cmd: '',
   },
@@ -105,11 +105,7 @@ const START_LIST: StartItem[] = [
 ]
 
 async function startPackage(device?: string) {
-  const packages = adb(`shell pm list packages`, device)
-    .toString()
-    .trim()
-    .split('\n')
-    .map(it => it.replace('package:', ''))
+  const packages = getInstalledPackages(device)
   const { value } = await prompts({
     type: 'autocomplete',
     name: 'value',

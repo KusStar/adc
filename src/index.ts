@@ -5,11 +5,17 @@ import { ime } from './ime'
 import { monkey } from './monkey'
 import { amStart } from './am-start'
 import { amStop } from './am-stop'
-import { checkDevices, getAdbDevices } from './utils'
+import { getAdbDevices } from './utils'
+import { installOrUninstall } from './install-or-uninstall'
 
 const args = process.argv.slice(2)
 
-const COMMANDS = [
+type CmdValue = 'am-start' | 'am-stop' | 'install/uninstall' | 'ime' | 'monkey' | 'wm' | 'exit'
+
+const COMMANDS: {
+  value: CmdValue
+  hint?: string
+}[] = [
   {
     value: 'am-start',
     hint: 'activity manager start actions',
@@ -17,6 +23,10 @@ const COMMANDS = [
   {
     value: 'am-stop',
     hint: 'activity manager stop actions',
+  },
+  {
+    value: 'install/uninstall',
+    hint: 'install or uninstall apk',
   },
   {
     value: 'ime',
@@ -39,7 +49,7 @@ function goBack() {
   openCmd()
 }
 
-async function openCmd(cmd?: string) {
+async function openCmd(cmd?: CmdValue) {
   const devices = getAdbDevices()
   if (devices.length === 0) {
     intro('adc - adb helper')
@@ -63,12 +73,14 @@ async function openCmd(cmd?: string) {
     amStop(devices, goBack)
   } else if (cmd === 'exit') {
     outro('exited')
+  } else if (cmd === 'install/uninstall') {
+    installOrUninstall(devices, goBack)
   } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
       message: 'adc',
       options,
-    }) as string
+    }) as CmdValue
     if (isCancel(selected)) {
       return outro('No command selected')
     }
@@ -78,5 +90,5 @@ async function openCmd(cmd?: string) {
 }
 
 export function startCli() {
-  openCmd(args[0])
+  openCmd(args[0] as any)
 }

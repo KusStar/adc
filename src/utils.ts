@@ -15,6 +15,14 @@ export function execAsync(cmd: string): Promise<string> {
   })
 }
 
+export function getInstalledPackages(device?: string, onlyUser?: boolean) {
+  return adb(`shell pm list packages ${onlyUser ? '-3' : ''}`, device)
+    .toString()
+    .trim()
+    .split('\n')
+    .map(it => it.replace('package:', ''))
+}
+
 export async function getCurrentPackage(device?: string) {
   const output = (await execAsync(`adb${deviceArg(device)} shell dumpsys activity top`)).trim()
   const lines = output.split('\n')

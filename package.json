@@ -1,22 +1,28 @@
 {
   "name": "@kuss/adc",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.cts",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
   "exports": {
-    "require": {
-      "types": "./dist/index.d.cts",
-      "default": "./dist/index.cjs"
-    },
     "import": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
     }
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "bin": "./dist/cli.js",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "dev": "pkgroll --watch",
     "build": "pkgroll",
@@ -26,24 +32,18 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "node-persist": "^3.1.3",
     "prompts": "^2.4.2"
   },
-  "engines": {
-    "node": ">=16"
-  },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.6.1",
     "@types/node": "^20.10.5",
     "@types/node-persist": "^3.1.8",
     "@types/prompts": "^2.4.9",
+    "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "pkgroll": "^2.0.1",
-    "typescript": "^5.3.3",
-    "@antfu/eslint-config": "^2.6.1",
-    "eslint": "npm:eslint-ts-patch@^8.56.0-0"
+    "typescript": "^5.3.3"
   }
 }
