@@ -43,8 +43,7 @@ function runConfig(config = '') {
   })
   try {
     execSync('adb shell am force-stop  com.miui.home')
-  }
-  catch (e) {
+  } catch (e) {
     console.error(e)
   }
   outro(`Run shell done!`)
@@ -63,22 +62,28 @@ async function createConfig(wmConfigs: Config[]) {
   const newConfig = await text({
     message: 'Enter your new config name',
     validate: (val) => {
-      if (val.length < 0)
+      if (val.length < 0) {
         return 'config name cannot be empty'
+      }
     },
   })
-  if (isCancel(newConfig))
+  if (isCancel(newConfig)) {
     return outro('No config name entered')
+  }
+
   const newConfigValue = await text({
     message: 'Enter your new config value',
     placeholder: 'size 1080x1920, density 160',
     validate: (val) => {
-      if (val.length < 0)
+      if (val.length < 0) {
         return 'config name cannot be empty'
+      }
     },
   })
-  if (isCancel(newConfigValue))
+  if (isCancel(newConfigValue)) {
     return outro('No config value entered')
+  }
+
   await saveConfig(wmConfigs, newConfig, newConfigValue)
   runConfig(newConfigValue)
 }
@@ -88,18 +93,23 @@ async function editConfig(wmConfigs: Config[]) {
     message: 'Which wm config to edit',
     options: wmConfigs.map(it => ({ value: it, label: it.name, hint: it.value })),
   })
-  if (isCancel(editedConfig))
+  if (isCancel(editedConfig)) {
     return outro('No config selected')
+  }
+
   const newConfigValue = await text({
     message: 'Enter your new config value',
     placeholder: 'size 1080x1920, density 160',
     validate: (val) => {
-      if (val.length < 0)
+      if (val.length < 0) {
         return 'config name cannot be empty'
+      }
     },
   })
-  if (isCancel(newConfigValue))
+  if (isCancel(newConfigValue)) {
     return outro('No config value entered')
+  }
+
   const newConfigs = wmConfigs.map((it) => {
     if (it.name === editedConfig) {
       return {
@@ -117,8 +127,9 @@ async function importConfig() {
   const importConfig = await text({
     message: 'Enter your config json',
     validate: (val) => {
-      if (val.length < 0)
+      if (val.length < 0) {
         return 'config json cannot be empty'
+      }
     },
   }) as string
   try {
@@ -129,8 +140,7 @@ async function importConfig() {
     }
     await storage.setItem('config', json)
     outro('Import config done')
-  }
-  catch (e) {
+  } catch (e) {
     outro(`Invalid json${e}`)
   }
 }
@@ -146,8 +156,9 @@ async function dumpConfig(wmConfigs: Config[]) {
   const newConfig = await text({
     message: 'Enter your new config name',
     validate: (val) => {
-      if (val.length < 0)
+      if (val.length < 0) {
         return 'config name cannot be empty'
+      }
     },
   }) as string
   await saveConfig(wmConfigs, newConfig, newConfigValue)
@@ -159,14 +170,16 @@ async function deleteConfig(wmConfigs: Config[]) {
     message: 'Which wm config to delete',
     options: wmConfigs.map(it => ({ value: it, label: it.name, hint: it.value })),
   }) as Config
-  if (isCancel(deletedConfig))
+  if (isCancel(deletedConfig)) {
     return outro('No config selected')
+  }
+
   const newConfigs = wmConfigs.filter(it => it.name !== deletedConfig.value)
   await storage.setItem('config', newConfigs)
   outro('config deleted')
 }
 
-export async function wm(goBack: () => void) {
+export async function wm(devices: string[], goBack: () => void) {
   const PERSIST_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../storage')
 
   await storage.init({
@@ -190,8 +203,7 @@ export async function wm(goBack: () => void) {
       { value: Op.DELETE, label: 'delete', hint: 'delete wm config' },
       { value: Op.BACK, label: 'back', hint: 'go back' },
     )
-  }
-  else {
+  } else {
     options.push({ value: Op.IMPORT, label: 'import config', hint: 'from json' })
   }
 
@@ -219,7 +231,7 @@ export async function wm(goBack: () => void) {
 
       case Op.SEPARATOR:
         outro('Just a separator')
-        wm(goBack)
+        wm(devices, goBack)
         break
 
       case Op.RESET:
@@ -243,8 +255,7 @@ export async function wm(goBack: () => void) {
         outro('Unknown operation')
         break
     }
-  }
-  else {
+  } else {
     if (isCancel(selectedConfig)) {
       outro('No config selected')
       return

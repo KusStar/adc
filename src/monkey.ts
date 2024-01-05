@@ -10,8 +10,10 @@ const STOP_CMD = 'adb shell kill $(adb shell pgrep monkey)'
 let once = false
 
 async function exitHandler() {
-  if (once)
+  if (once) {
     return
+  }
+
   once = true
   const value = await confirm({
     message: 'Try to exit, stop the monkey test?',
@@ -20,8 +22,7 @@ async function exitHandler() {
   if (value) {
     execSync(STOP_CMD)
     outro('monkey stopped')
-  }
-  else {
+  } else {
     outro('exited')
   }
 }
@@ -38,12 +39,11 @@ function listenExit() {
   }
 }
 
-export async function monkey(goBack: () => void, cmd?: string) {
+export async function monkey(devices: string[], goBack: () => void, cmd?: string) {
   let selected
   if (cmd === 'start' || cmd === 'stop') {
     selected = cmd
-  }
-  else {
+  } else {
     selected = await select({
       message: 'Monkey Test',
       options: [
@@ -66,8 +66,9 @@ export async function monkey(goBack: () => void, cmd?: string) {
     })
   }
 
-  if (isCancel(selected))
+  if (isCancel(selected)) {
     return outro('cancelled')
+  }
 
   const removeListeners = listenExit()
 
@@ -75,18 +76,15 @@ export async function monkey(goBack: () => void, cmd?: string) {
     const packageName = await getCurrentPackage()
     note(`running monkey test for ${packageName}`)
     execSync(START_CMD(packageName))
-  }
-  else if (selected === 'stop') {
+  } else if (selected === 'stop') {
     once = true
     try {
       execSync(STOP_CMD, {
         stdio: 'ignore',
       })
-    }
-    catch (error) { }
+    } catch (error) { }
     outro('monkey stopped')
-  }
-  else if (selected === 'back') {
+  } else if (selected === 'back') {
     removeListeners()
     goBack()
   }

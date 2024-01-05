@@ -9,7 +9,7 @@ async function getRunningPackages() {
   return lines.map(it => it[it.length - 1]).filter(it => it !== 'system' && !it.startsWith('.'))
 }
 
-export async function amStop(goBack: () => void) {
+export async function amStop(devices: string[], goBack: () => void) {
   const spin = spinner()
   spin.start('Getting running packages')
   const currentPackage = await getCurrentPackage()
@@ -33,11 +33,13 @@ export async function amStop(goBack: () => void) {
     suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
 
-  if (!value)
+  if (!value) {
     return outro('cancelled')
+  }
 
-  if (value === 'back')
+  if (value === 'back') {
     return goBack()
+  }
 
   stopApp(value)
 

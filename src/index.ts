@@ -5,7 +5,7 @@ import { ime } from './ime'
 import { monkey } from './monkey'
 import { amStart } from './am-start'
 import { amStop } from './am-stop'
-import { isAdbConnected } from './utils'
+import { getAdbDevices } from './utils'
 
 const args = process.argv.slice(2)
 
@@ -40,42 +40,39 @@ function goBack() {
 }
 
 async function openCmd(cmd?: string) {
-  if (!isAdbConnected()) {
+  const devices = getAdbDevices()
+  if (devices.length === 0) {
     intro('adc - adb helper')
     return cancel('adb not connected')
   }
 
   if (cmd === 'wm') {
     intro('adb wm helper')
-    wm(goBack)
-  }
-  else if (cmd === 'ime') {
+    wm(devices, goBack)
+  } else if (cmd === 'ime') {
     intro('adb ime helper')
-    ime(goBack)
-  }
-  else if (cmd === 'monkey') {
+    ime(devices, goBack)
+  } else if (cmd === 'monkey') {
     intro('adb monkey helper')
-    monkey(goBack, args[1])
-  }
-  else if (cmd === 'am-start') {
+    monkey(devices, goBack, args[1])
+  } else if (cmd === 'am-start') {
     intro('adb am start helper')
-    amStart(goBack)
-  }
-  else if (cmd === 'am-stop') {
+    amStart(devices, goBack)
+  } else if (cmd === 'am-stop') {
     intro('adb am stop helper')
-    amStop(goBack)
-  }
-  else if (cmd === 'exit') {
+    amStop(devices, goBack)
+  } else if (cmd === 'exit') {
     outro('exited')
-  }
-  else {
+  } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
       message: 'adc',
       options,
     }) as string
-    if (isCancel(selected))
+    if (isCancel(selected)) {
       return outro('No command selected')
+    }
+
     openCmd(selected)
   }
 }

@@ -1,4 +1,4 @@
-import { confirm, log, outro } from '@clack/prompts'
+import { confirm, isCancel, log, outro, select } from '@clack/prompts'
 import prompts from 'prompts'
 import { adb, stopApp } from './utils'
 
@@ -104,7 +104,7 @@ const START_LIST: StartItem[] = [
   },
 ]
 
-async function startPackage() {
+async function startPackage(devices: string[]) {
   const packages = adb('shell pm list packages').toString().trim().split('\n').map(it => it.replace('package:', ''))
   const { value } = await prompts({
     type: 'autocomplete',
@@ -113,27 +113,39 @@ async function startPackage() {
     choices: packages.map(it => ({ title: it, value: it })),
     suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
-  if (!value)
+  if (!value) {
     return outro('cancelled')
+  }
 
   try {
-    adb(`shell monkey -p ${value} -c android.intent.category.LAUNCHER 1`)
+    if (devices.length > 1) {
+      const selected = await select({
+        message: 'Select device',
+        options: devices.map(it => ({ label: it, value: it })),
+      })
+      if (isCancel(selected)) {
+        return outro('cancelled')
+      }
+    } else {
+      adb(`shell monkey -p ${value} -c android.intent.category.LAUNCHER 1`)
+    }
+
     outro('done')
-  }
-  catch (error) {
+  } catch (error) {
     log.error(`cannot start ${value}`)
     const yes = await confirm({
       message: 'Do you want to continue?',
       initialValue: true,
     })
-    if (yes)
-      startPackage()
-    else
+    if (yes) {
+      startPackage(devices)
+    } else {
       outro('exited')
+    }
   }
 }
 
-export async function amStart(goBack: () => void) {
+export async function amStart(devices: string[], goBack: () => void) {
   const { value } = await prompts({
     type: 'autocomplete',
     name: 'value',
@@ -150,20 +162,23 @@ export async function amStart(goBack: () => void) {
     suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
 
-  if (!value)
+  if (!value) {
     return outro('cancelled')
+  }
 
-  if (value === 'back')
+  if (value === 'back') {
     return goBack()
+  }
 
   if (value === 'app') {
-    startPackage()
+    startPackage(devices)
     return
   }
 
   const selectedCmd = START_LIST.find(it => it.value === value)
-  if (!selectedCmd)
+  if (!selectedCmd) {
     return outro('cancelled')
+  }
 
   stopSetting()
   adb(`shell am start ${selectedCmd.cmd}`)
