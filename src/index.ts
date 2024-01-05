@@ -7,10 +7,18 @@ import { amStart } from './am-start'
 import { amStop } from './am-stop'
 import { getAdbDevices } from './utils'
 import { installOrUninstall } from './install-or-uninstall'
+import { rotation } from './rotation'
 
 const args = process.argv.slice(2)
 
-type CmdValue = 'am-start' | 'am-stop' | 'install/uninstall' | 'ime' | 'monkey' | 'wm' | 'exit'
+type CmdValue = 'am-start'
+  | 'am-stop'
+  | 'install/uninstall'
+  | 'ime'
+  | 'monkey'
+  | 'rotation'
+  | 'wm'
+  | 'exit'
 
 const COMMANDS: {
   value: CmdValue
@@ -35,6 +43,10 @@ const COMMANDS: {
   {
     value: 'monkey',
     hint: 'start or stop monkey test',
+  },
+  {
+    value: 'rotation',
+    hint: 'manage screen rotation',
   },
   {
     value: 'wm',
@@ -75,6 +87,8 @@ async function openCmd(cmd?: CmdValue) {
     outro('exited')
   } else if (cmd === 'install/uninstall') {
     installOrUninstall(devices, goBack)
+  } else if (cmd === 'rotation') {
+    rotation(devices, goBack)
   } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({
