@@ -5,7 +5,7 @@ import { ime } from './ime'
 import { monkey } from './monkey'
 import { amStart } from './am-start'
 import { amStop } from './am-stop'
-import { getAdbDevices } from './utils'
+import { checkDevices, getAdbDevices } from './utils'
 import { installOrUninstall } from './install-or-uninstall'
 import { rotation } from './rotation'
 
@@ -67,28 +67,29 @@ async function openCmd(cmd?: CmdValue) {
     intro('adc - adb helper')
     return cancel('adb not connected')
   }
+  const device = await checkDevices(devices)
 
   if (cmd === 'wm') {
     intro('adb wm helper')
-    wm(devices, goBack)
+    wm(device, goBack)
   } else if (cmd === 'ime') {
     intro('adb ime helper')
-    ime(devices, goBack)
+    ime(device, goBack)
   } else if (cmd === 'monkey') {
     intro('adb monkey helper')
-    monkey(devices, goBack, args[1])
+    monkey(device, goBack, args[1])
   } else if (cmd === 'am-start') {
     intro('adb am start helper')
-    amStart(devices, goBack)
+    amStart(device, goBack)
   } else if (cmd === 'am-stop') {
     intro('adb am stop helper')
-    amStop(devices, goBack)
+    amStop(device, goBack)
   } else if (cmd === 'exit') {
     outro('exited')
   } else if (cmd === 'install/uninstall') {
-    installOrUninstall(devices, goBack)
+    installOrUninstall(device, goBack)
   } else if (cmd === 'rotation') {
-    rotation(devices, goBack)
+    rotation(device, goBack)
   } else {
     const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
     const selected = await select({

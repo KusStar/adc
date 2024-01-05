@@ -1,6 +1,6 @@
 import { outro, spinner } from '@clack/prompts'
 import prompts from 'prompts'
-import { adbAsync, checkDevices, deviceArg, getCurrentPackage, stopApp } from './utils'
+import { adbAsync, deviceArg, getCurrentPackage, stopApp } from './utils'
 
 async function getRunningPackages(device?: string) {
   const output = (await adbAsync(`${deviceArg(device)} shell ps`)).toString().trim()
@@ -11,8 +11,7 @@ async function getRunningPackages(device?: string) {
   return lines.map(it => it[it.length - 1]).filter(it => it !== 'system' && !it.startsWith('.'))
 }
 
-export async function amStop(devices: string[], goBack: () => void) {
-  const device = await checkDevices(devices)
+export async function amStop(device: string | undefined, goBack: () => void) {
   const spin = spinner()
   spin.start('Getting running packages')
   const currentPackage = await getCurrentPackage(device)

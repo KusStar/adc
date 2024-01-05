@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
 import { isCancel, log, outro, select, text } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, checkDevices } from './utils'
+import { adb } from './utils'
 
 interface Config {
   name: string
@@ -179,9 +179,7 @@ async function deleteConfig(wmConfigs: Config[]) {
   outro('config deleted')
 }
 
-export async function wm(devices: string[], goBack: () => void) {
-  const device = await checkDevices(devices)
-
+export async function wm(device: string | undefined, goBack: () => void) {
   const PERSIST_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../storage')
 
   await storage.init({
@@ -242,7 +240,7 @@ export async function wm(devices: string[], goBack: () => void) {
 
       case Op.SEPARATOR:
         outro('Just a separator')
-        wm(devices, goBack)
+        wm(device, goBack)
         break
 
       case Op.RESET:

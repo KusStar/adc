@@ -1,9 +1,7 @@
-import { intro, isCancel, log, outro, select } from '@clack/prompts'
-import { adb, checkDevices } from './utils'
+import { isCancel, log, outro, select } from '@clack/prompts'
+import { adb } from './utils'
 
-export async function rotation(devices: string[], goBack: () => void) {
-  const device = await checkDevices(devices)
-
+export async function rotation(device: string | undefined, goBack: () => void) {
   const selected = await select({
     message: 'Select a rotation',
     options: [
