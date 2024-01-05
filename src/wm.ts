@@ -213,8 +213,17 @@ export async function wm(devices: string[], goBack: () => void) {
     type: 'autocomplete',
     name: 'value',
     message: 'Select wm config',
-    choices: options.map(it => ({ title: it.label, value: it.value })),
-    suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
+    choices: options.map(it => (
+      {
+        title: it.label,
+        value: it.value,
+        description: it.hint,
+      }
+    )),
+    suggest: (input, choices) =>
+      Promise.resolve(choices
+        .filter(it => it.title.includes(input)),
+      ),
   })
 
   if (typeof selectedConfig === 'string') {
