@@ -1,6 +1,6 @@
-import { isCancel, outro, select } from '@clack/prompts'
+import { isCancel, outro, select, spinner } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, getInstalledPackages } from '../utils'
+import { adb, adbAsync, getInstalledPackages } from '../utils'
 
 export async function installOrUninstall(device: string | undefined, goBack: () => void) {
   const selected = await select({
@@ -38,8 +38,12 @@ export async function installOrUninstall(device: string | undefined, goBack: () 
     if (!value) {
       return outro('not selected')
     }
-    adb(`install -r ${value}`, device)
-    outro(`installed ${value}`)
+    const filename = value.split('/').pop()
+
+    const s = spinner()
+    s.start(`installing ${filename}`)
+    await adbAsync(`install -r ${value}`, device)
+    s.stop(`installed ${filename}`)
   } else if (selected === 'uninstall') {
     const packages = getInstalledPackages(device, true)
     const { value } = await prompts({
@@ -53,7 +57,9 @@ export async function installOrUninstall(device: string | undefined, goBack: () 
     if (!value) {
       return outro('not selected')
     }
-    adb(`uninstall ${value}`, device)
-    outro(`uninstalled ${value}`)
+    const s = spinner()
+    s.start(`uninstalling ${value}`)
+    await adbAsync(`uninstall ${value}`, device)
+    s.stop(`uninstalling ${value}`)
   }
 }

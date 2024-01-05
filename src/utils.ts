@@ -54,12 +54,17 @@ export function adb(cmd: string, device?: string[] | string) {
   return execSync(`adb ${cmd}`)
 }
 
-export function adbAsync(cmd: string, deviceIds?: string[]) {
-  if (deviceIds && deviceIds.length > 1) {
-    return execAsync(`adb -s ${deviceIds.join(' -s ')} ${cmd}`)
+export function adbAsync(cmd: string, device?: string[] | string) {
+  if (typeof device === 'string') {
+    return execAsync(`adb -s ${device} ${cmd}`)
+  } else {
+    if (device && device.length > 1) {
+      return execAsync(`adb -s ${device.join(' -s ')} ${cmd}`)
+    } else if (device && device.length === 1) {
+      return execAsync(`adb -s ${device[0]} ${cmd}`)
+    }
+    return execAsync(`adb ${cmd}`)
   }
-
-  return execAsync(`adb ${cmd}`)
 }
 
 export function getAdbDevices() {
