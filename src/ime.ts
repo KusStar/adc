@@ -1,8 +1,10 @@
-import { execSync } from 'node:child_process'
 import { isCancel, outro, select } from '@clack/prompts'
+import { adb, checkDevices } from './utils'
 
 export async function ime(devices: string[], goBack: () => void) {
-  const imes = execSync('adb shell ime list -s').toString().trim().split('\n')
+  const device = await checkDevices(devices)
+
+  const imes = adb('shell ime list -s', device).toString().trim().split('\n')
 
   const options = imes.map(it => ({ value: it, label: it }))
 
@@ -25,7 +27,7 @@ export async function ime(devices: string[], goBack: () => void) {
     return goBack()
   }
 
-  execSync(`adb shell ime set ${selected}`)
+  adb(`shell ime set ${selected}`, device)
 
   outro(`ime set to ${selected}`)
 }

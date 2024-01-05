@@ -1,15 +1,17 @@
 import process from 'node:process'
-import { execSync } from 'node:child_process'
 import { confirm, isCancel, note, outro, select } from '@clack/prompts'
-import { getCurrentPackage } from './utils'
+import { adb, checkDevices, getCurrentPackage } from './utils'
 
-const START_CMD = (packageName: string) => `adb shell "monkey -p ${packageName} -v -v -v -s 1000 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --kill-process-after-error --pct-appswitch 30 --pct-touch 45 --pct-syskeys 0 --pct-motion 10 --pct-anyevent 10 --pct-flip 5 --pct-trackball 0 --pct-pinchzoom 0 --pct-nav 0 --pct-majornav 0 --pct-permission 0 --throttle 500 1200000000 2>&1 | tee /sdcard/logcat/monkey.log.txt "`
+function START_CMD(packageName: string) {
+  // eslint-disable-next-line style/max-len
+  return `shell "monkey -p ${packageName} -v -v -v -s 1000 --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --kill-process-after-error --pct-appswitch 30 --pct-touch 45 --pct-syskeys 0 --pct-motion 10 --pct-anyevent 10 --pct-flip 5 --pct-trackball 0 --pct-pinchzoom 0 --pct-nav 0 --pct-majornav 0 --pct-permission 0 --throttle 500 1200000000 2>&1 | tee /sdcard/logcat/monkey.log.txt "`
+}
 
-const STOP_CMD = 'adb shell kill $(adb shell pgrep monkey)'
+const STOP_CMD = 'shell kill $(adb shell pgrep monkey)'
 
 let once = false
 
-async function exitHandler() {
+async function exitHandler(device?: string) {
   if (once) {
     return
   }
@@ -20,26 +22,27 @@ async function exitHandler() {
     initialValue: true,
   })
   if (value) {
-    execSync(STOP_CMD)
+    adb(STOP_CMD, device)
     outro('monkey stopped')
   } else {
     outro('exited')
   }
 }
 
-function listenExit() {
+function listenExit(device?: string) {
   const events = [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`]
   events.forEach((eventType) => {
-    process.on(eventType, exitHandler)
+    process.on(eventType, () => exitHandler(device))
   })
   return () => {
     events.forEach((eventType) => {
-      process.removeListener(eventType, exitHandler)
+      process.removeListener(eventType, () => exitHandler(device))
     })
   }
 }
 
 export async function monkey(devices: string[], goBack: () => void, cmd?: string) {
+  const device = await checkDevices(devices)
   let selected
   if (cmd === 'start' || cmd === 'stop') {
     selected = cmd
@@ -70,18 +73,19 @@ export async function monkey(devices: string[], goBack: () => void, cmd?: string
     return outro('cancelled')
   }
 
-  const removeListeners = listenExit()
+  const removeListeners = listenExit(device)
 
   if (selected === 'start') {
     const packageName = await getCurrentPackage()
     note(`running monkey test for ${packageName}`)
-    execSync(START_CMD(packageName))
+    if (!packageName) {
+      return outro('no package name found')
+    }
+    adb(START_CMD(packageName), device)
   } else if (selected === 'stop') {
     once = true
     try {
-      execSync(STOP_CMD, {
-        stdio: 'ignore',
-      })
+      adb(STOP_CMD, device)
     } catch (error) { }
     outro('monkey stopped')
   } else if (selected === 'back') {

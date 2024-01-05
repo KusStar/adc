@@ -1,8 +1,8 @@
-import { confirm, isCancel, log, outro, select } from '@clack/prompts'
+import { confirm, log, outro } from '@clack/prompts'
 import prompts from 'prompts'
-import { adb, stopApp } from './utils'
+import { adb, checkDevices, stopApp } from './utils'
 
-const stopSetting = () => stopApp('com.android.settings')
+const stopSetting = (device?: string) => stopApp('com.android.settings', device)
 
 interface StartItem {
   value: string
@@ -104,31 +104,26 @@ const START_LIST: StartItem[] = [
   },
 ]
 
-async function startPackage(devices: string[]) {
-  const packages = adb('shell pm list packages').toString().trim().split('\n').map(it => it.replace('package:', ''))
+async function startPackage(device?: string) {
+  const packages = adb(`shell pm list packages`, device)
+    .toString()
+    .trim()
+    .split('\n')
+    .map(it => it.replace('package:', ''))
   const { value } = await prompts({
     type: 'autocomplete',
     name: 'value',
     message: 'Select package',
     choices: packages.map(it => ({ title: it, value: it })),
-    suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
+    suggest: (input, choices) =>
+      Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
   if (!value) {
     return outro('cancelled')
   }
 
   try {
-    if (devices.length > 1) {
-      const selected = await select({
-        message: 'Select device',
-        options: devices.map(it => ({ label: it, value: it })),
-      })
-      if (isCancel(selected)) {
-        return outro('cancelled')
-      }
-    } else {
-      adb(`shell monkey -p ${value} -c android.intent.category.LAUNCHER 1`)
-    }
+    adb(`shell monkey -p ${value} -c android.intent.action.MAIN -c android.intent.category.LAUNCHER 1`, device)
 
     outro('done')
   } catch (error) {
@@ -138,7 +133,7 @@ async function startPackage(devices: string[]) {
       initialValue: true,
     })
     if (yes) {
-      startPackage(devices)
+      startPackage(device)
     } else {
       outro('exited')
     }
@@ -170,8 +165,10 @@ export async function amStart(devices: string[], goBack: () => void) {
     return goBack()
   }
 
+  const device = await checkDevices(devices)
+
   if (value === 'app') {
-    startPackage(devices)
+    startPackage(device)
     return
   }
 
@@ -180,8 +177,8 @@ export async function amStart(devices: string[], goBack: () => void) {
     return outro('cancelled')
   }
 
-  stopSetting()
-  adb(`shell am start ${selectedCmd.cmd}`)
+  stopSetting(device)
+  adb(`shell am start ${selectedCmd.cmd}`, device)
 
   outro('done')
 }

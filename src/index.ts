@@ -5,7 +5,7 @@ import { ime } from './ime'
 import { monkey } from './monkey'
 import { amStart } from './am-start'
 import { amStop } from './am-stop'
-import { getAdbDevices } from './utils'
+import { checkDevices, getAdbDevices } from './utils'
 
 const args = process.argv.slice(2)
 

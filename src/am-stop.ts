@@ -1,20 +1,23 @@
 import { outro, spinner } from '@clack/prompts'
 import prompts from 'prompts'
-import { adbAsync, getCurrentPackage, stopApp } from './utils'
+import { adbAsync, checkDevices, deviceArg, getCurrentPackage, stopApp } from './utils'
 
-async function getRunningPackages() {
-  const output = (await adbAsync('shell ps | grep u0_')).trim()
-  const lines = output.split('\n').map(it => it.trim().split(' '))
+async function getRunningPackages(device?: string) {
+  const output = (await adbAsync(`${deviceArg(device)} shell ps`)).toString().trim()
+  const lines = output.split('\n')
+    .filter(it => it.includes('u0_'))
+    .map(it => it.trim().split(' '))
 
   return lines.map(it => it[it.length - 1]).filter(it => it !== 'system' && !it.startsWith('.'))
 }
 
 export async function amStop(devices: string[], goBack: () => void) {
+  const device = await checkDevices(devices)
   const spin = spinner()
   spin.start('Getting running packages')
-  const currentPackage = await getCurrentPackage()
-  const runningPackages = await getRunningPackages()
-  spin.stop()
+  const currentPackage = await getCurrentPackage(device)
+  const runningPackages = await getRunningPackages(device)
+  spin.stop(currentPackage)
 
   const { value } = await prompts({
     type: 'autocomplete',
@@ -41,7 +44,7 @@ export async function amStop(devices: string[], goBack: () => void) {
     return goBack()
   }
 
-  stopApp(value)
+  stopApp(value, device)
 
   outro('done')
 }

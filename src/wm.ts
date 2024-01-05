@@ -1,10 +1,9 @@
-import { execSync } from 'node:child_process'
-
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
-import { isCancel, outro, select, text } from '@clack/prompts'
+import { isCancel, log, outro, select, text } from '@clack/prompts'
 import prompts from 'prompts'
+import { adb, checkDevices } from './utils'
 
 interface Config {
   name: string
@@ -33,18 +32,16 @@ const enum Op {
   BACK = 'back',
 }
 
-function runConfig(config = '') {
+function runConfig(config = '', device?: string) {
   const sets = config.split(',').map(it => it.trim())
 
-  // run adb shell wm size 1080x1920
-
   sets.forEach((it) => {
-    execSync(`adb shell wm ${it}`)
+    adb(`shell wm ${it}`, device)
   })
   try {
-    execSync('adb shell am force-stop  com.miui.home')
+    adb('shell am force-stop  com.miui.home', device)
   } catch (e) {
-    console.error(e)
+    log.error(String(e))
   }
   outro(`Run shell done!`)
 }
@@ -145,9 +142,12 @@ async function importConfig() {
   }
 }
 
-async function dumpConfig(wmConfigs: Config[]) {
-  const newSize = execSync('adb shell wm size').toString().trim().match(/Override size: (?<size>\d+x\d+)/)?.groups?.size
-  const newDensity = execSync('adb shell wm density').toString().trim().match(/Override density: (?<density>\d+)/)?.groups?.density
+async function dumpConfig(wmConfigs: Config[], device?: string) {
+  const newSize = adb('shell wm size', device).toString().trim().match(/Override size: (?<size>\d+x\d+)/)?.groups?.size
+  const newDensity = adb('shell wm density', device)
+    .toString()
+    .trim()
+    .match(/Override density: (?<density>\d+)/)?.groups?.density
   if (!newSize || !newDensity) {
     outro('Invalid dump')
     return
@@ -180,6 +180,8 @@ async function deleteConfig(wmConfigs: Config[]) {
 }
 
 export async function wm(devices: string[], goBack: () => void) {
+  const device = await checkDevices(devices)
+
   const PERSIST_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../storage')
 
   await storage.init({
@@ -235,7 +237,7 @@ export async function wm(devices: string[], goBack: () => void) {
         break
 
       case Op.RESET:
-        execSync('adb shell wm reset')
+        adb('shell wm reset', device)
         break
 
       case Op.IMPORT:
@@ -260,6 +262,6 @@ export async function wm(devices: string[], goBack: () => void) {
       outro('No config selected')
       return
     }
-    runConfig(selectedConfig.value)
+    runConfig(selectedConfig.value, device)
   }
 }

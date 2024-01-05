@@ -1,4 +1,7 @@
 import { exec, execSync } from 'node:child_process'
+import { isCancel, select } from '@clack/prompts'
+
+export const deviceArg = (device?: string) => device ? ` -s ${device}` : ''
 
 export function execAsync(cmd: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -12,20 +15,34 @@ export function execAsync(cmd: string): Promise<string> {
   })
 }
 
-export async function getCurrentPackage() {
-  const output = await execAsync(`adb shell dumpsys activity top | grep "ACTIVITY" | tail -n 1 | awk '{print $2}' | cut -d '/' -f1`)
-  return output.trim()
-}
+export async function getCurrentPackage(device?: string) {
+  const output = (await execAsync(`adb${deviceArg(device)} shell dumpsys activity top`)).trim()
+  const lines = output.split('\n')
+  const activityLine = lines.reverse().find(line => line.includes('ACTIVITY'))
 
-export function stopApp(packageName: string) {
-  adb(`shell am force-stop ${packageName}`)
-}
+  if (activityLine) {
+    const componentName = activityLine.split(' ').filter(it => it.length > 0)[1]
 
-export function adb(cmd: string, deviceIds?: string[]) {
-  if (deviceIds && deviceIds.length > 1) {
-    return execSync(`adb -s ${deviceIds.join(' -s ')} ${cmd}`)
+    const packageActivity = componentName.split('/', 2)[0]
+
+    return packageActivity
   }
+}
 
+export function stopApp(packageName: string, device?: string) {
+  adb(`shell am force-stop ${packageName}`, device)
+}
+
+export function adb(cmd: string, device?: string[] | string) {
+  if (typeof device === 'string') {
+    return execSync(`adb -s ${device} ${cmd}`)
+  } else {
+    if (device && device.length > 1) {
+      return execSync(`adb -s ${device.join(' -s ')} ${cmd}`)
+    } else if (device && device.length === 1) {
+      return execSync(`adb -s ${device[0]} ${cmd}`)
+    }
+  }
   return execSync(`adb ${cmd}`)
 }
 
@@ -47,5 +64,23 @@ export function getAdbDevices() {
     return []
   } catch (error) {
     return []
+  }
+}
+
+export async function checkDevices(device: string[] | string) {
+  if (typeof device === 'string') {
+    return device
+  } else {
+    if (device.length > 1) {
+      const selectedDevice = await select({
+        message: 'Multiple devices detected, select a device to execute',
+        options: device.map(it => ({ label: it, value: it })),
+      }) as string
+      if (isCancel(selectedDevice)) {
+        return
+      }
+      return selectedDevice
+    }
+    return device[0]
   }
 }
