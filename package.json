@@ -25,7 +25,7 @@
   },
   "scripts": {
     "dev": "pkgroll --watch",
-    "build": "pkgroll",
+    "build": "pkgroll -m",
     "prepublish": "npm run build",
     "lint": "eslint src --fix"
   },
@@ -33,6 +33,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@bindrs/rfd": "^2.2.2",
     "@clack/prompts": "^0.7.0",
     "node-persist": "^3.1.3",
     "prompts": "^2.4.2"

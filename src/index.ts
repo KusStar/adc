@@ -1,5 +1,6 @@
 import process from 'node:process'
-import { cancel, intro, isCancel, outro, select } from '@clack/prompts'
+import { cancel, intro, outro } from '@clack/prompts'
+import prompts from 'prompts'
 import { wm } from './wm'
 import { ime } from './ime'
 import { monkey } from './monkey'
@@ -91,16 +92,22 @@ async function openCmd(cmd?: CmdValue) {
   } else if (cmd === 'rotation') {
     rotation(device, goBack)
   } else {
-    const options = COMMANDS.map(it => ({ value: it.value, label: it.value, hint: it.hint }))
-    const selected = await select({
+    const options = COMMANDS.map(it => ({
+      value: it.value as string,
+      title: it.value as string,
+      description: it.hint,
+    }))
+    const { value } = await prompts({
+      type: 'autocomplete',
+      name: 'value',
       message: 'adc',
-      options,
-    }) as CmdValue
-    if (isCancel(selected)) {
+      choices: options,
+    })
+    if (!value) {
       return outro('No command selected')
     }
 
-    openCmd(selected)
+    openCmd(value)
   }
 }
 

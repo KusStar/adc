@@ -1,57 +1,60 @@
-import { isCancel, log, outro, select } from '@clack/prompts'
+import { log, outro } from '@clack/prompts'
+import prompts from 'prompts'
 import { adb } from './utils'
 
 export async function rotation(device: string | undefined, goBack: () => void) {
-  const selected = await select({
+  const { value } = await prompts({
+    type: 'autocomplete',
     message: 'Select a rotation',
-    options: [
+    name: 'value',
+    choices: [
       {
         value: '0',
-        label: 'portrait(lock)',
-        hint: 'lock the screen to portrait',
+        title: 'portrait(lock)',
+        description: 'lock the screen to portrait',
       },
       {
         value: '1',
-        label: 'landscape(lock), 90 degrees',
-        hint: 'lock the screen to landscape',
+        title: 'landscape(lock), 90 degrees',
+        description: 'lock the screen to landscape',
       },
       {
         value: '2',
-        label: 'reverse-portrait(lock), 180 degrees',
-        hint: 'lock the screen to reverse-portrait',
+        title: 'reverse-portrait(lock), 180 degrees',
+        description: 'lock the screen to reverse-portrait',
       },
       {
         value: '3',
-        label: 'reverse-landscape(lock), 270 degrees',
-        hint: 'lock the screen to reverse-landscape',
+        title: 'reverse-landscape(lock), 270 degrees',
+        description: 'lock the screen to reverse-landscape',
       },
       {
         value: 'reset',
-        label: 'reset',
+        title: 'reset',
       },
       {
         value: 'back',
-        label: 'back',
-        hint: 'back to main menu',
+        title: 'back',
+        description: 'back to main menu',
       },
     ],
   })
 
-  if (isCancel(selected)) {
+  if (!value) {
     return outro('No ime selected')
   }
 
-  if (selected === 'back') {
+  if (value === 'back') {
     return goBack()
   }
 
-  if (selected === 'reset') {
+  if (value === 'reset') {
     adb('shell settings put system user_rotation 0', device)
     adb('shell settings put system accelerometer_rotation 1', device)
   } else {
-    log.message(`set rotation to ${selected}`)
+    log.message(`set rotation to ${value}`)
     adb('shell settings put system accelerometer_rotation 0', device)
-    adb(`shell settings put system user_rotation ${selected}`, device)
+    adb(`shell settings put system user_rotation ${value}`, device)
   }
 
   outro(`done`)
