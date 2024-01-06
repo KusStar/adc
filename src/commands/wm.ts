@@ -191,7 +191,6 @@ export async function wm(device: string | undefined, goBack: () => void) {
       { value: 'dump', label: 'dump', hint: 'dump from current' },
       { value: 'edit', label: 'edit', hint: 'edit wm config' },
       { value: 'delete', label: 'delete', hint: 'delete wm config' },
-      { value: 'back', label: 'back', hint: 'go back' },
     )
   } else {
     options.push({ value: 'import', label: 'import config', hint: 'from json' })
@@ -207,12 +206,18 @@ export async function wm(device: string | undefined, goBack: () => void) {
         value: it.value,
         description: it.hint,
       }
-    )),
+    )).concat([
+      { value: 'back', title: 'back', description: 'go back' },
+    ]),
     suggest: (input, choices) =>
       Promise.resolve(choices
         .filter(it => it.title.includes(input)),
       ),
   })
+
+  if (!selectedConfig) {
+    return outro('No config selected')
+  }
 
   if (typeof selectedConfig === 'string') {
     switch (selectedConfig as Op) {

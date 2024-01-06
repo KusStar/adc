@@ -72,12 +72,12 @@ export async function monkey(device: string | undefined, goBack: () => void, cmd
     return outro('cancelled')
   }
 
-  const removeListeners = listenExit(device)
-
   if (selected === 'start') {
+    const removeListeners = listenExit(device)
     const packageName = await getCurrentPackage()
     note(`running monkey test for ${packageName}`)
     if (!packageName) {
+      removeListeners()
       return outro('no package name found')
     }
     adb(START_CMD(packageName), device)
@@ -88,7 +88,6 @@ export async function monkey(device: string | undefined, goBack: () => void, cmd
     } catch (error) { }
     outro('monkey stopped')
   } else if (selected === 'back') {
-    removeListeners()
     goBack()
   }
 }

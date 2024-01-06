@@ -1,6 +1,11 @@
 import { exec, execSync } from 'node:child_process'
 import { isCancel, select } from '@clack/prompts'
 
+export function promptsOnCancel(prompt: any, answers: any) {
+  answers._cancelled = true
+  return false
+}
+
 export const deviceArg = (device?: string) => device ? ` -s ${device}` : ''
 
 export function execAsync(cmd: string): Promise<string> {

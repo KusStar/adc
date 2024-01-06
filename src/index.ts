@@ -1,5 +1,5 @@
 import process from 'node:process'
-import { cancel, intro, outro } from '@clack/prompts'
+import { cancel, intro, log, outro } from '@clack/prompts'
 import prompts from 'prompts'
 import {
   COMMANDS,
@@ -17,6 +17,7 @@ import { checkDevices, getAdbDevices } from './utils'
 const args = process.argv.slice(2)
 
 function goBack() {
+  log.warn('back\n')
   openCmd()
 }
 
