@@ -2,6 +2,17 @@ import { exec, execSync } from 'node:child_process'
 import { isCancel, select } from '@clack/prompts'
 import prompts from 'prompts'
 
+let _goBack: () => void
+
+export function setGoBack(fn: () => void) {
+  _goBack = fn
+}
+
+// avoid circular dependency
+export function goBack() {
+  _goBack()
+}
+
 export function promptsOnCancel(prompt: any, answers: any) {
   answers._cancelled = true
   return false

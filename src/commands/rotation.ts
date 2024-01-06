@@ -1,7 +1,7 @@
 import { outro } from '@clack/prompts'
-import { adb, prompts2 } from '../utils'
+import { adb, goBack, prompts2 } from '../utils'
 
-export async function rotation(device: string | undefined, goBack: () => void) {
+export async function rotation(device: string | undefined) {
   const choices = [
     {
       value: '0',

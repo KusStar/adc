@@ -12,18 +12,13 @@ import {
   rotation,
   wm,
 } from './commands'
-import { checkDevices, getAdbDevices } from './utils'
+import { checkDevices, getAdbDevices, setGoBack } from './utils'
 
 const args = process.argv.slice(2)
 
-function goBack() {
-  log.warn('back\n')
-  openCmd()
-}
-
 let lastCmd: CmdValue | undefined
 
-async function openCmd(cmd?: CmdValue) {
+export async function openCmd(cmd?: CmdValue) {
   const devices = getAdbDevices()
   if (devices.length === 0) {
     intro('adc - adb helper')
@@ -33,28 +28,28 @@ async function openCmd(cmd?: CmdValue) {
 
   switch (cmd) {
     case 'wm':
-      wm(device, goBack)
+      wm(device)
       break
     case 'ime':
-      ime(device, goBack)
+      ime(device)
       break
     case 'monkey':
-      monkey(device, goBack, args[1])
+      monkey(device, args[1])
       break
     case 'am-start':
-      amStart(device, goBack)
+      amStart(device)
       break
     case 'am-stop':
-      amStop(device, goBack)
+      amStop(device)
       break
     case 'exit':
       outro('exited')
       break
     case 'install/uninstall':
-      installOrUninstall(device, goBack)
+      installOrUninstall(device)
       break
     case 'rotation':
-      rotation(device, goBack)
+      rotation(device)
       break
     default:
       {
@@ -83,6 +78,12 @@ async function openCmd(cmd?: CmdValue) {
   }
 }
 
+function goBack() {
+  log.warn('back\n')
+  openCmd()
+}
+
 export function startCli() {
+  setGoBack(goBack)
   openCmd(args[0] as any)
 }

@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { confirm, isCancel, note, outro, select } from '@clack/prompts'
-import { adb, getCurrentPackage } from '../utils'
+import { adb, getCurrentPackage, goBack } from '../utils'
 
 function START_CMD(packageName: string) {
   // eslint-disable-next-line style/max-len
@@ -41,7 +41,7 @@ function listenExit(device?: string) {
   }
 }
 
-export async function monkey(device: string | undefined, goBack: () => void, cmd?: string) {
+export async function monkey(device: string | undefined, cmd?: string) {
   let selected
   if (cmd === 'start' || cmd === 'stop') {
     selected = cmd

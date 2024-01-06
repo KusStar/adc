@@ -2,7 +2,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
 import { isCancel, log, outro, select, text } from '@clack/prompts'
-import { adb, prompts2 } from '../utils'
+import { adb, goBack, prompts2 } from '../utils'
 
 interface Config {
   name: string
@@ -52,7 +52,7 @@ async function createConfig(wmConfigs: Config[]) {
         return 'config name cannot be empty'
       }
     },
-  })
+  }) as string
   if (isCancel(newConfig)) {
     return outro('No config name entered')
   }
@@ -65,7 +65,7 @@ async function createConfig(wmConfigs: Config[]) {
         return 'config name cannot be empty'
       }
     },
-  })
+  }) as string
   if (isCancel(newConfigValue)) {
     return outro('No config value entered')
   }
@@ -168,7 +168,7 @@ async function deleteConfig(wmConfigs: Config[]) {
   outro('config deleted')
 }
 
-export async function wm(device: string | undefined, goBack: () => void) {
+export async function wm(device: string | undefined) {
   const PERSIST_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '../storage')
 
   await storage.init({
@@ -239,7 +239,7 @@ export async function wm(device: string | undefined, goBack: () => void) {
 
       case 'separator':
         outro('Just a separator')
-        wm(device, goBack)
+        wm(device)
         break
 
       case 'reset':

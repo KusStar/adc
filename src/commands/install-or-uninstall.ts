@@ -1,10 +1,10 @@
 import { isCancel, log, outro, select, spinner } from '@clack/prompts'
-import { getInstalledPackages, prompts2 } from '../utils'
+import { getInstalledPackages, goBack, prompts2 } from '../utils'
 
-export async function installOrUninstall(device: string | undefined, goBack: () => void) {
+export async function installOrUninstall(device: string | undefined) {
   const cancel = () => {
     log.warn('cancelled')
-    installOrUninstall(device, goBack)
+    installOrUninstall(device)
   }
 
   const selected = await select({

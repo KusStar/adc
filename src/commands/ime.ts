@@ -1,7 +1,7 @@
 import { isCancel, outro, select } from '@clack/prompts'
-import { adb } from '../utils'
+import { adb, goBack } from '../utils'
 
-export async function ime(device: string | undefined, goBack: () => void) {
+export async function ime(device: string | undefined) {
   const imes = adb('shell ime list -s', device).toString().trim().split('\n')
 
   const options = imes.map(it => ({ value: it, label: it }))

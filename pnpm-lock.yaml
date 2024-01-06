@@ -8,6 +8,12 @@ dependencies:
   '@clack/prompts':
     specifier: ^0.7.0
     version: 0.7.0
+  '@types/node-persist':
+    specifier: ^3.1.8
+    version: 3.1.8
+  '@types/prompts':
+    specifier: ^2.4.9
+    version: 2.4.9
   node-persist:
     specifier: ^3.1.3
     version: 3.1.3
@@ -22,12 +28,6 @@ devDependencies:
   '@types/node':
     specifier: ^20.10.5
     version: 20.10.5
-  '@types/node-persist':
-    specifier: ^3.1.8
-    version: 3.1.8
-  '@types/prompts':
-    specifier: ^2.4.9
-    version: 2.4.9
   eslint:
     specifier: npm:eslint-ts-patch@^8.56.0-0
     version: /eslint-ts-patch@8.56.0-0
@@ -702,13 +702,12 @@ packages:
     resolution: {integrity: sha512-QLidg6/SadZYPrTKxtxL1A85XBoQlG40bhoMdhu6DH6+eNCMr2j+RGfFZ9I9+IY8W/PDwQonJ+iBWD62jZjMfg==}
     dependencies:
       '@types/node': 20.10.5
-    dev: true
+    dev: false
 
   /@types/node@20.10.5:
     resolution: {integrity: sha512-nNPsNE65wjMxEKI93yOP+NPGGBJz/PoN3kZsVLee0XMiJolxSekEVD8wRwBUBqkwc7UWop0edW50yrCQW4CyRw==}
     dependencies:
       undici-types: 5.26.5
-    dev: true
 
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -719,7 +718,7 @@ packages:
     dependencies:
       '@types/node': 20.10.5
       kleur: 3.0.3
-    dev: true
+    dev: false
 
   /@types/resolve@1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -2755,7 +2754,6 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-    dev: true
 
   /unist-util-stringify-position@2.0.3:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
