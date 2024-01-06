@@ -2,6 +2,8 @@
 
 An interactive ADB CLI tool for Android Development.
 
+![Alt text](adc.gif)
+
 ## Usage
 
 ```bash
