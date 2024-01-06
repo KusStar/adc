@@ -2,8 +2,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
 import { isCancel, log, outro, select, text } from '@clack/prompts'
-import prompts from 'prompts'
-import { adb } from '../utils'
+import { adb, prompts2 } from '../utils'
 
 interface Config {
   name: string
@@ -196,7 +195,7 @@ export async function wm(device: string | undefined, goBack: () => void) {
     options.push({ value: 'import', label: 'import config', hint: 'from json' })
   }
 
-  const { value: selectedConfig } = await prompts({
+  const { value: selectedConfig, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
     message: 'Select wm config',
@@ -214,6 +213,11 @@ export async function wm(device: string | undefined, goBack: () => void) {
         .filter(it => it.title.includes(input)),
       ),
   })
+
+  if (cancelled) {
+    goBack()
+    return
+  }
 
   if (!selectedConfig) {
     return outro('No config selected')

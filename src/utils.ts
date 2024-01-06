@@ -1,9 +1,28 @@
 import { exec, execSync } from 'node:child_process'
 import { isCancel, select } from '@clack/prompts'
+import prompts from 'prompts'
 
 export function promptsOnCancel(prompt: any, answers: any) {
   answers._cancelled = true
   return false
+}
+
+export async function prompts2<T extends string = string>(
+  questions: prompts.PromptObject<T> | Array<prompts.PromptObject<T>>,
+  options?: prompts.Options,
+) {
+  const { _cancelled, ...rest } = await prompts(questions, {
+    onCancel: promptsOnCancel,
+    ...options,
+  }) as any
+
+  return {
+    cancelled: _cancelled,
+    ...rest,
+  } as {
+    cancelled: boolean
+    [key: string]: any
+  }
 }
 
 export const deviceArg = (device?: string) => device ? ` -s ${device}` : ''

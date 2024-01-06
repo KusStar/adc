@@ -1,7 +1,5 @@
-/* eslint-disable ts/ban-ts-comment */
 import { isCancel, log, outro, select, spinner } from '@clack/prompts'
-import prompts from 'prompts'
-import { getInstalledPackages, promptsOnCancel } from '../utils'
+import { getInstalledPackages, prompts2 } from '../utils'
 
 export async function installOrUninstall(device: string | undefined, goBack: () => void) {
   const cancel = () => {
@@ -36,15 +34,12 @@ export async function installOrUninstall(device: string | undefined, goBack: () 
     return goBack()
   }
   if (selected === 'install') {
-    // @ts-expect-error
-    const { value, _cancelled } = await prompts({
+    const { value, cancelled } = await prompts2({
       type: 'text',
       name: 'value',
       message: 'Input apk path',
-    }, {
-      onCancel: promptsOnCancel,
     })
-    if (_cancelled) {
+    if (cancelled) {
       cancel()
       return
     }
@@ -60,8 +55,7 @@ export async function installOrUninstall(device: string | undefined, goBack: () 
     s.stop(`installed ${filename}`)
   } else if (selected === 'uninstall') {
     const packages = getInstalledPackages(device, true)
-    // @ts-expect-error
-    const { value, _cancelled } = await prompts({
+    const { value, cancelled } = await prompts2({
       type: 'autocomplete',
       name: 'value',
       message: 'Select package to uninstall',
@@ -75,10 +69,8 @@ export async function installOrUninstall(device: string | undefined, goBack: () 
         ]),
       suggest: (input, choices) =>
         Promise.resolve(choices.filter(it => it.title.includes(input))),
-    }, {
-      onCancel: promptsOnCancel,
     })
-    if (_cancelled) {
+    if (cancelled) {
       cancel()
       return
     }

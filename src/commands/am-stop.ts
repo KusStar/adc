@@ -1,6 +1,5 @@
 import { outro, spinner } from '@clack/prompts'
-import prompts from 'prompts'
-import { adbAsync, deviceArg, getCurrentPackage, stopApp } from '../utils'
+import { adbAsync, deviceArg, getCurrentPackage, prompts2, stopApp } from '../utils'
 
 async function getRunningPackages(device?: string) {
   const output = (await adbAsync(`${deviceArg(device)} shell ps`)).toString().trim()
@@ -18,7 +17,7 @@ export async function amStop(device: string | undefined, goBack: () => void) {
   const runningPackages = await getRunningPackages(device)
   spin.stop(currentPackage)
 
-  const { value } = await prompts({
+  const { value, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
     message: 'am stop...',
@@ -34,6 +33,11 @@ export async function amStop(device: string | undefined, goBack: () => void) {
     initial: currentPackage,
     suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
+
+  if (cancelled) {
+    goBack()
+    return
+  }
 
   if (!value) {
     return outro('cancelled')

@@ -1,6 +1,5 @@
-import { log, outro } from '@clack/prompts'
-import prompts from 'prompts'
-import { adb } from '../utils'
+import { outro } from '@clack/prompts'
+import { adb, prompts2 } from '../utils'
 
 export async function rotation(device: string | undefined, goBack: () => void) {
   const choices = [
@@ -34,15 +33,20 @@ export async function rotation(device: string | undefined, goBack: () => void) {
       description: 'back to main menu',
     },
   ]
-  const { value } = await prompts({
+  const { value, cancelled } = await prompts2({
     type: 'autocomplete',
     message: 'Select a rotation',
     name: 'value',
     choices,
   })
 
+  if (cancelled) {
+    goBack()
+    return
+  }
+
   if (!value) {
-    return outro('No ime selected')
+    return outro('No rotation selected')
   }
 
   if (value === 'back') {
