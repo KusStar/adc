@@ -21,6 +21,8 @@ function goBack() {
   openCmd()
 }
 
+let lastCmd: CmdValue | undefined
+
 async function openCmd(cmd?: CmdValue) {
   const devices = getAdbDevices()
   if (devices.length === 0) {
@@ -66,11 +68,14 @@ async function openCmd(cmd?: CmdValue) {
           name: 'value',
           message: 'adc',
           choices: options,
+          initial: lastCmd,
         })
 
         if (!value) {
           return outro('No command selected')
         }
+
+        lastCmd = value
 
         openCmd(value)
       }
