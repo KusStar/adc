@@ -14,6 +14,8 @@ import {
 } from './commands'
 import { checkDevices, getAdbDevices, setGoBack } from './utils'
 
+export * from './commands'
+
 const args = process.argv.slice(2)
 
 let lastCmd: CmdValue | undefined
