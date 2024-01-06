@@ -1,5 +1,4 @@
 import { confirm, log, outro } from '@clack/prompts'
-import prompts from 'prompts'
 import { adb, getInstalledPackages, prompts2, stopApp } from '../utils'
 
 const stopSetting = (device?: string) => stopApp('com.android.settings', device)
@@ -106,7 +105,7 @@ const START_LIST: StartItem[] = [
 
 async function startPackage(device: string | undefined, goBack: () => void) {
   const packages = getInstalledPackages(device)
-  const { value } = await prompts({
+  const { value, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
     message: 'Select package',
@@ -121,6 +120,10 @@ async function startPackage(device: string | undefined, goBack: () => void) {
     suggest: (input, choices) =>
       Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
+  if (cancelled) {
+    goBack()
+    return
+  }
   if (!value) {
     return outro('cancelled')
   }
@@ -177,7 +180,9 @@ export async function amStart(device: string | undefined, goBack: () => void) {
   }
 
   if (value === 'app') {
-    startPackage(device, goBack)
+    startPackage(device, () => {
+      amStart(device, goBack)
+    })
     return
   }
 
