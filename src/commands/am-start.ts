@@ -104,18 +104,28 @@ const START_LIST: StartItem[] = [
   },
 ]
 
-async function startPackage(device?: string) {
+async function startPackage(device: string | undefined, goBack: () => void) {
   const packages = getInstalledPackages(device)
   const { value } = await prompts({
     type: 'autocomplete',
     name: 'value',
     message: 'Select package',
-    choices: packages.map(it => ({ title: it, value: it })),
+    choices: packages
+      .map(it => ({ title: it, value: it }))
+      .concat([
+        {
+          title: 'back',
+          value: 'back',
+        },
+      ]),
     suggest: (input, choices) =>
       Promise.resolve(choices.filter(it => it.title.includes(input))),
   })
   if (!value) {
     return outro('cancelled')
+  }
+  if (value === 'back') {
+    return goBack()
   }
 
   try {
@@ -129,7 +139,7 @@ async function startPackage(device?: string) {
       initialValue: true,
     })
     if (yes) {
-      startPackage(device)
+      startPackage(device, goBack)
     } else {
       outro('exited')
     }
@@ -162,7 +172,7 @@ export async function amStart(device: string | undefined, goBack: () => void) {
   }
 
   if (value === 'app') {
-    startPackage(device)
+    startPackage(device, goBack)
     return
   }
 
