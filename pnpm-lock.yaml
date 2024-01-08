@@ -4,7 +4,15 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@clack/core@0.3.3':
+    hash: ezxvuykawnuqy5raq5rgtp5oom
+    path: patches/@clack__core@0.3.3.patch
+
 dependencies:
+  '@clack/core':
+    specifier: ^0.3.3
+    version: 0.3.3(patch_hash=ezxvuykawnuqy5raq5rgtp5oom)
   '@clack/prompts':
     specifier: ^0.7.0
     version: 0.7.0
@@ -176,17 +184,18 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
-  /@clack/core@0.3.3:
+  /@clack/core@0.3.3(patch_hash=ezxvuykawnuqy5raq5rgtp5oom):
     resolution: {integrity: sha512-5ZGyb75BUBjlll6eOa1m/IZBxwk91dooBWhPSL67sWcLS0zt9SnswRL0l26TVdBhb0wnWORRxUn//uH6n4z7+A==}
     dependencies:
       picocolors: 1.0.0
       sisteransi: 1.0.5
     dev: false
+    patched: true
 
   /@clack/prompts@0.7.0:
     resolution: {integrity: sha512-0MhX9/B4iL6Re04jPrttDm+BsP8y6mS7byuv0BvXgdXhbV5PdlsHt55dvNsuBCPZ7xq1oTAOOuotR9NFbQyMSA==}
     dependencies:
-      '@clack/core': 0.3.3
+      '@clack/core': 0.3.3(patch_hash=ezxvuykawnuqy5raq5rgtp5oom)
       picocolors: 1.0.0
       sisteransi: 1.0.5
     dev: false
