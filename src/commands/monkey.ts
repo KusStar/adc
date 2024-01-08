@@ -69,7 +69,7 @@ export async function monkey(device: string | undefined, cmd?: string) {
   }
 
   if (isCancel(selected)) {
-    return outro('cancelled')
+    return goBack()
   }
 
   if (selected === 'start') {

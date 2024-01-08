@@ -27,10 +27,7 @@ export async function installOrUninstall(device: string | undefined) {
       },
     ],
   })
-  if (isCancel(selected)) {
-    return outro('No command selected')
-  }
-  if (selected === 'back') {
+  if (isCancel(selected) || selected === 'back') {
     return goBack()
   }
   if (selected === 'install') {

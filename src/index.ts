@@ -1,6 +1,5 @@
 import process from 'node:process'
 import { cancel, intro, log, outro } from '@clack/prompts'
-import prompts from 'prompts'
 import {
   COMMANDS,
   type CmdValue,
@@ -12,7 +11,7 @@ import {
   rotation,
   wm,
 } from './commands'
-import { checkDevices, getAdbDevices, setGoBack } from './utils'
+import { checkDevices, getAdbDevices, prompts2, setGoBack } from './utils'
 
 export * from './commands'
 
@@ -24,7 +23,7 @@ export async function openCmd(cmd?: CmdValue) {
   const devices = getAdbDevices()
   if (devices.length === 0) {
     intro('adc - adb helper')
-    return cancel('adb not connected')
+    return cancel('no device connected')
   }
   const device = await checkDevices(devices)
 
@@ -60,7 +59,7 @@ export async function openCmd(cmd?: CmdValue) {
           title: it.value as string,
           description: it.hint,
         }))
-        const { value } = await prompts({
+        const { value, cancelled } = await prompts2({
           type: 'autocomplete',
           name: 'value',
           message: 'adc',
@@ -68,6 +67,9 @@ export async function openCmd(cmd?: CmdValue) {
           initial: lastCmd,
         })
 
+        if (cancelled) {
+          return outro('cancelled')
+        }
         if (!value) {
           return outro('No command selected')
         }

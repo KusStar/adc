@@ -17,11 +17,7 @@ export async function ime(device: string | undefined) {
     options,
   })
 
-  if (isCancel(selected)) {
-    return outro('No ime selected')
-  }
-
-  if (selected === 'back') {
+  if (isCancel(selected) || selected === 'back') {
     return goBack()
   }
 

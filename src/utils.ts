@@ -13,7 +13,7 @@ export function goBack() {
   _goBack()
 }
 
-export function promptsOnCancel(prompt: any, answers: any) {
+function promptsOnCancel(prompt: any, answers: any) {
   answers._cancelled = true
   return false
 }
