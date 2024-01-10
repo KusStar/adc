@@ -7,6 +7,7 @@ export { installOrUninstall } from './install-or-uninstall'
 export { rotation } from './rotation'
 export { input } from './input'
 export { screencap } from './screencap'
+export { props } from './props'
 
 export type CmdValue = 'am-start'
   | 'am-stop'
@@ -14,6 +15,7 @@ export type CmdValue = 'am-start'
   | 'input'
   | 'ime'
   | 'monkey'
+  | 'props'
   | 'rotation'
   | 'screencap'
   | 'wm'
@@ -46,6 +48,10 @@ export const COMMANDS: {
   {
     value: 'monkey',
     hint: 'start or stop monkey test',
+  },
+  {
+    value: 'props',
+    hint: 'get or set prop',
   },
   {
     value: 'rotation',

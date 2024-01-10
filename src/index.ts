@@ -9,6 +9,7 @@ import {
   input,
   installOrUninstall,
   monkey,
+  props,
   rotation,
   screencap,
   wm,
@@ -60,6 +61,9 @@ export async function openCmd(cmd?: CmdValue) {
     case 'screencap':
       screencap(device)
       break
+    case 'props':
+      props(device)
+      break
     default:
       {
         const options = COMMANDS.map(it => ({
@@ -73,6 +77,7 @@ export async function openCmd(cmd?: CmdValue) {
           message: 'adc',
           choices: options,
           initial: lastCmd,
+          limit: COMMANDS.length,
         })
 
         if (cancelled) {
