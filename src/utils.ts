@@ -121,7 +121,7 @@ export async function checkDevices(device: string[] | string) {
   } else {
     if (device.length > 1) {
       const selectedDevice = await select({
-        message: 'Multiple devices detected, select a device to execute',
+        message: 'multiple devices detected, select a device to execute',
         options: device.map(it => ({ label: it, value: it })),
       }) as string
       if (isCancel(selectedDevice)) {

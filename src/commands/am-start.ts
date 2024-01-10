@@ -108,7 +108,7 @@ async function startPackage(device: string | undefined, goBack: () => void) {
   const { value, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
-    message: 'Select package',
+    message: 'select a package to start',
     choices: packages
       .map(it => ({ title: it, value: it }))
       .concat([
@@ -138,7 +138,7 @@ async function startPackage(device: string | undefined, goBack: () => void) {
   } catch (error) {
     log.error(`cannot start ${value}`)
     const yes = await confirm({
-      message: 'Do you want to continue?',
+      message: 'do you want to continue?',
       initialValue: true,
     })
     if (yes) {

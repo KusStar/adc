@@ -18,7 +18,7 @@ async function exitHandler(device?: string) {
 
   once = true
   const value = await confirm({
-    message: 'Try to exit, stop the monkey test?',
+    message: 'try to exit, stop the monkey test?',
     initialValue: true,
   })
   if (value) {
@@ -47,7 +47,7 @@ export async function monkey(device: string | undefined, cmd?: string) {
     selected = cmd
   } else {
     selected = await select({
-      message: 'Monkey Test',
+      message: 'monkey Test',
       options: [
         {
           value: 'start',

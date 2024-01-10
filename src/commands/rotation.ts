@@ -35,7 +35,7 @@ export async function rotation(device: string | undefined) {
   ]
   const { value, cancelled } = await prompts2({
     type: 'autocomplete',
-    message: 'Select a rotation',
+    message: 'select a rotation',
     name: 'value',
     choices,
   })

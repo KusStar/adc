@@ -13,7 +13,7 @@ export async function ime(device: string | undefined) {
   } as any)
 
   const selected = await select({
-    message: 'Select a ime',
+    message: 'select a ime',
     options,
   })
 

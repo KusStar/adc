@@ -5,7 +5,7 @@ export async function screencap(device: string | undefined) {
   const { path, cancelled } = await prompts2({
     type: 'text',
     name: 'path',
-    message: 'Save to:',
+    message: 'save to:',
     initial: './screencap.png',
   })
 

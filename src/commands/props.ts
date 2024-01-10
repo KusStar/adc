@@ -13,7 +13,7 @@ export async function props(device: string | undefined) {
   const { choice, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'choice',
-    message: 'Get or set prop',
+    message: 'get or set prop',
     choices: [
       {
         value: 'get',
@@ -49,7 +49,7 @@ export async function props(device: string | undefined) {
     const { value, cancelled } = await prompts2({
       type: 'autocomplete',
       name: 'value',
-      message: 'Get a prop',
+      message: 'get a prop',
       choices: allProps.map(it => ({ value: it[1], title: it[0], description: it[1] })),
       suggest: (input, choices) => Promise.resolve(choices.filter(it => it.title.includes(input))),
     })
@@ -65,7 +65,7 @@ export async function props(device: string | undefined) {
     const { key, cancelled } = await prompts2({
       type: 'text',
       name: 'key',
-      message: 'Prop key',
+      message: 'prop key',
     })
 
     if (cancelled) {
@@ -75,7 +75,7 @@ export async function props(device: string | undefined) {
     const { value, cancelled: cancelled2 } = await prompts2({
       type: 'text',
       name: 'value',
-      message: 'Prop value',
+      message: 'prop value',
     })
 
     if (cancelled2) {

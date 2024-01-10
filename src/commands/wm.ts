@@ -46,7 +46,7 @@ async function saveConfig(wmConfigs: Config[], newConfig: string, newConfigValue
 
 async function createConfig(wmConfigs: Config[]) {
   const newConfig = await text({
-    message: 'Enter your new config name',
+    message: 'enter your new config name',
     validate: (val) => {
       if (val.length < 0) {
         return 'config name cannot be empty'
@@ -58,7 +58,7 @@ async function createConfig(wmConfigs: Config[]) {
   }
 
   const newConfigValue = await text({
-    message: 'Enter your new config value',
+    message: 'enter your new config value',
     placeholder: 'size 1080x1920, density 160',
     validate: (val) => {
       if (val.length < 0) {
@@ -76,7 +76,7 @@ async function createConfig(wmConfigs: Config[]) {
 
 async function editConfig(wmConfigs: Config[]) {
   const editedConfig = await select({
-    message: 'Which wm config to edit',
+    message: 'which wm config to edit',
     options: wmConfigs.map(it => ({ value: it, label: it.name, hint: it.value })),
   })
   if (isCancel(editedConfig)) {
@@ -84,7 +84,7 @@ async function editConfig(wmConfigs: Config[]) {
   }
 
   const newConfigValue = await text({
-    message: 'Enter your new config value',
+    message: 'enter your new config value',
     placeholder: 'size 1080x1920, density 160',
     validate: (val) => {
       if (val.length < 0) {
@@ -111,7 +111,7 @@ async function editConfig(wmConfigs: Config[]) {
 
 async function importConfig() {
   const importConfig = await text({
-    message: 'Enter your config json',
+    message: 'enter your config json',
     validate: (val) => {
       if (val.length < 0) {
         return 'config json cannot be empty'
@@ -143,7 +143,7 @@ async function dumpConfig(wmConfigs: Config[], device?: string) {
   }
   const newConfigValue = `size ${newSize}, density ${newDensity}`
   const newConfig = await text({
-    message: 'Enter your new config name',
+    message: 'enter your new config name',
     validate: (val) => {
       if (val.length < 0) {
         return 'config name cannot be empty'
@@ -156,7 +156,7 @@ async function dumpConfig(wmConfigs: Config[], device?: string) {
 
 async function deleteConfig(wmConfigs: Config[]) {
   const deletedConfig = await select({
-    message: 'Which wm config to delete',
+    message: 'which wm config to delete',
     options: wmConfigs.map(it => ({ value: it, label: it.name, hint: it.value })),
   }) as Config
   if (isCancel(deletedConfig)) {
@@ -198,7 +198,7 @@ export async function wm(device: string | undefined) {
   const { value: selectedConfig, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
-    message: 'Select wm config',
+    message: 'select wm config',
     choices: options.map(it => (
       {
         title: it.label,

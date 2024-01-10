@@ -8,7 +8,7 @@ export async function installOrUninstall(device: string | undefined) {
   }
 
   const selected = await select({
-    message: 'Select a command',
+    message: 'select a command',
     options: [
       {
         value: 'install',
@@ -34,7 +34,7 @@ export async function installOrUninstall(device: string | undefined) {
     const { value, cancelled } = await prompts2({
       type: 'text',
       name: 'value',
-      message: 'Input apk path',
+      message: 'input apk path',
     })
     if (cancelled) {
       cancel()
@@ -55,7 +55,7 @@ export async function installOrUninstall(device: string | undefined) {
     const { value, cancelled } = await prompts2({
       type: 'autocomplete',
       name: 'value',
-      message: 'Select package to uninstall',
+      message: 'select package to uninstall',
       choices: packages
         .map(it => ({ title: it, value: it }))
         .concat([

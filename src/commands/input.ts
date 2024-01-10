@@ -296,7 +296,7 @@ export async function input(device: string | undefined) {
   const { value, cancelled } = await prompts2({
     type: 'autocomplete',
     name: 'value',
-    message: 'Select key',
+    message: 'select key',
     choices: keys.map(key => ({
       title: key,
       value: keyEvents[key],
@@ -316,7 +316,7 @@ export async function input(device: string | undefined) {
     const { text, cancelled } = await prompts2({
       type: 'text',
       name: 'text',
-      message: 'Enter text',
+      message: 'enter text',
     })
 
     if (cancelled) {
