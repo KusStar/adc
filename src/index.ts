@@ -12,6 +12,7 @@ import {
   props,
   rotation,
   screencap,
+  uimode,
   wm,
 } from './commands'
 import { checkDevices, getAdbDevices, prompts2, setGoBack } from './utils'
@@ -63,6 +64,9 @@ export async function openCmd(cmd?: CmdValue) {
       break
     case 'props':
       props(device)
+      break
+    case 'uimode':
+      uimode(device)
       break
     default:
       {

@@ -8,6 +8,7 @@ export { rotation } from './rotation'
 export { input } from './input'
 export { screencap } from './screencap'
 export { props } from './props'
+export { uimode } from './uimode'
 
 export type CmdValue = 'am-start'
   | 'am-stop'
@@ -18,6 +19,7 @@ export type CmdValue = 'am-start'
   | 'props'
   | 'rotation'
   | 'screencap'
+  | 'uimode'
   | 'wm'
   | 'exit'
 
@@ -60,6 +62,10 @@ export const COMMANDS: {
   {
     value: 'screencap',
     hint: 'take screenshot',
+  },
+  {
+    value: 'uimode',
+    hint: 'manage ui mode, day/night/auto',
   },
   {
     value: 'wm',
