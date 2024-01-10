@@ -1,5 +1,5 @@
 import { isCancel, log, outro, select, spinner } from '@clack/prompts'
-import { getInstalledPackages, goBack, prompts2 } from '../utils'
+import { adbAsync, getInstalledPackages, goBack, prompts2 } from '../utils'
 
 export async function installOrUninstall(device: string | undefined) {
   const cancel = () => {
@@ -48,7 +48,7 @@ export async function installOrUninstall(device: string | undefined) {
 
     const s = spinner()
     s.start(`installing ${filename}`)
-    // await adbAsync(`install -r ${value}`, device)
+    await adbAsync(`install -r ${value}`, device)
     s.stop(`installed ${filename}`)
   } else if (selected === 'uninstall') {
     const packages = getInstalledPackages(device, true)
@@ -81,7 +81,7 @@ export async function installOrUninstall(device: string | undefined) {
     }
     const s = spinner()
     s.start(`uninstalling ${value}`)
-    // await adbAsync(`uninstall ${value}`, device)
+    await adbAsync(`uninstall ${value}`, device)
     s.stop(`uninstalling ${value}`)
   }
 }
