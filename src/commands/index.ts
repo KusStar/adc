@@ -5,10 +5,12 @@ export { amStart } from './am-start'
 export { amStop } from './am-stop'
 export { installOrUninstall } from './install-or-uninstall'
 export { rotation } from './rotation'
+export { input } from './input'
 
 export type CmdValue = 'am-start'
   | 'am-stop'
   | 'install/uninstall'
+  | 'input'
   | 'ime'
   | 'monkey'
   | 'rotation'
@@ -30,6 +32,10 @@ export const COMMANDS: {
   {
     value: 'install/uninstall',
     hint: 'install or uninstall apk',
+  },
+  {
+    value: 'input',
+    hint: 'send input event',
   },
   {
     value: 'ime',

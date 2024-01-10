@@ -6,6 +6,7 @@ import {
   amStart,
   amStop,
   ime,
+  input,
   installOrUninstall,
   monkey,
   rotation,
@@ -30,6 +31,9 @@ export async function openCmd(cmd?: CmdValue) {
   switch (cmd) {
     case 'wm':
       wm(device)
+      break
+    case 'input':
+      input(device)
       break
     case 'ime':
       ime(device)
