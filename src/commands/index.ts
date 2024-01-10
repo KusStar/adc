@@ -6,6 +6,7 @@ export { amStop } from './am-stop'
 export { installOrUninstall } from './install-or-uninstall'
 export { rotation } from './rotation'
 export { input } from './input'
+export { screencap } from './screencap'
 
 export type CmdValue = 'am-start'
   | 'am-stop'
@@ -14,6 +15,7 @@ export type CmdValue = 'am-start'
   | 'ime'
   | 'monkey'
   | 'rotation'
+  | 'screencap'
   | 'wm'
   | 'exit'
 
@@ -48,6 +50,10 @@ export const COMMANDS: {
   {
     value: 'rotation',
     hint: 'manage screen rotation',
+  },
+  {
+    value: 'screencap',
+    hint: 'take screenshot',
   },
   {
     value: 'wm',

@@ -10,6 +10,7 @@ import {
   installOrUninstall,
   monkey,
   rotation,
+  screencap,
   wm,
 } from './commands'
 import { checkDevices, getAdbDevices, prompts2, setGoBack } from './utils'
@@ -55,6 +56,9 @@ export async function openCmd(cmd?: CmdValue) {
       break
     case 'rotation':
       rotation(device)
+      break
+    case 'screencap':
+      screencap(device)
       break
     default:
       {
