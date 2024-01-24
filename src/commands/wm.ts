@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
-import { isCancel, log, outro, select, text } from '@clack/prompts'
+import { intro, isCancel, log, outro, select, text } from '@clack/prompts'
 import { adb, goBack, prompts2 } from '../utils'
 
 interface Config {
@@ -21,17 +21,26 @@ type Option = {
   hint?: string
 }
 
+function stopLauncher(device?: string) {
+  try {
+    const launcher = adb('shell cmd shortcut get-default-launcher', device)
+    const launcherPackage = launcher.toString()
+      .trim()
+      .match(/Launcher: ComponentInfo{(?<package>.+)\//)?.groups?.package
+      || 'com.miui.home'
+    adb(`shell am force-stop  ${launcherPackage}`, device)
+  } catch (e) {
+    log.error(String(e))
+  }
+}
+
 function runConfig(config = '', device?: string) {
   const sets = config.split(',').map(it => it.trim())
 
   sets.forEach((it) => {
     adb(`shell wm ${it}`, device)
   })
-  try {
-    adb('shell am force-stop  com.miui.home', device)
-  } catch (e) {
-    log.error(String(e))
-  }
+  stopLauncher(device)
   outro(`Run shell done!`)
 }
 
@@ -244,6 +253,7 @@ export async function wm(device: string | undefined) {
 
       case 'reset':
         adb('shell wm reset', device)
+        stopLauncher(device)
         break
 
       case 'import':
