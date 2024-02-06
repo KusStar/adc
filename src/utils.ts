@@ -1,16 +1,14 @@
 import { exec, execSync } from 'node:child_process'
-import { isCancel, select } from '@clack/prompts'
+import { isCancel, note, select } from '@clack/prompts'
 import prompts from 'prompts'
 
-let _goBack: () => void
-
-export function setGoBack(fn: () => void) {
-  _goBack = fn
+export const ctx = {
+  goBack: () => {},
 }
 
 // avoid circular dependency
 export function goBack() {
-  _goBack()
+  ctx.goBack?.()
 }
 
 function promptsOnCancel(prompt: any, answers: any) {
@@ -76,30 +74,46 @@ export function stopApp(packageName: string, device?: string) {
   adb(`shell am force-stop ${packageName}`, device)
 }
 
+function execSync2(cmd: string, print = true) {
+  if (print) {
+    note(cmd)
+  }
+  return execSync(cmd)
+}
+
+export function execAsync2(cmd: string, print = true) {
+  if (print) {
+    note(cmd)
+  }
+  return execAsync(cmd)
+}
+
 export function adb(cmd: string, device?: string[] | string) {
+  let finalCmd: string = `adb ${cmd}`
   if (typeof device === 'string') {
-    return execSync(`adb -s ${device} ${cmd}`)
+    finalCmd = `adb -s ${device} ${cmd}`
   } else {
     if (device && device.length > 1) {
-      return execSync(`adb -s ${device.join(' -s ')} ${cmd}`)
+      finalCmd = `adb -s ${device.join(' -s ')} ${cmd}`
     } else if (device && device.length === 1) {
-      return execSync(`adb -s ${device[0]} ${cmd}`)
+      finalCmd = `adb -s ${device[0]} ${cmd}`
     }
   }
-  return execSync(`adb ${cmd}`)
+  return execSync2(finalCmd)
 }
 
 export function adbAsync(cmd: string, device?: string[] | string) {
+  let finalCmd: string = `adb ${cmd}`
   if (typeof device === 'string') {
-    return execAsync(`adb -s ${device} ${cmd}`)
+    finalCmd = `adb -s ${device} ${cmd}`
   } else {
     if (device && device.length > 1) {
-      return execAsync(`adb -s ${device.join(' -s ')} ${cmd}`)
+      finalCmd = `adb -s ${device.join(' -s ')} ${cmd}`
     } else if (device && device.length === 1) {
-      return execAsync(`adb -s ${device[0]} ${cmd}`)
+      finalCmd = `adb -s ${device[0]} ${cmd}`
     }
-    return execAsync(`adb ${cmd}`)
   }
+  return execAsync2(finalCmd)
 }
 
 export function getAdbDevices() {
@@ -108,7 +122,6 @@ export function getAdbDevices() {
     if (output.includes('List of devices attached')) {
       return output.split('\n').slice(1).map(line => line.split('\t')[0])
     }
-
     return []
   } catch (error) {
     return []

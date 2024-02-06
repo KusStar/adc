@@ -15,7 +15,7 @@ import {
   uimode,
   wm,
 } from './commands'
-import { checkDevices, getAdbDevices, prompts2, setGoBack } from './utils'
+import { checkDevices, ctx, getAdbDevices, prompts2 } from './utils'
 
 export * from './commands'
 
@@ -105,6 +105,6 @@ function goBack() {
 }
 
 export function startCli() {
-  setGoBack(goBack)
+  ctx.goBack = goBack
   openCmd(args[0] as any)
 }
