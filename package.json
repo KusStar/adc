@@ -3,8 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "KusStar (https://github.com/KusStar)",
   "license": "MIT",
+  "homepage": "https://github.com/KusStar/adc#readme",
+  "repository": "KusStar/adc",
   "keywords": [],
   "exports": {
     "import": {
@@ -27,7 +29,8 @@
     "dev": "pkgroll --watch",
     "build": "pkgroll -m",
     "prepublish": "npm run build",
-    "lint": "eslint src --fix"
+    "lint": "eslint src --fix",
+    "release": "release-it"
   },
   "publishConfig": {
     "access": "public"
@@ -45,11 +48,17 @@
     "@types/node": "^20.10.5",
     "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "pkgroll": "^2.0.1",
+    "release-it": "^17.1.1",
     "typescript": "^5.3.3"
   },
   "pnpm": {
     "patchedDependencies": {
       "@clack/core@0.3.3": "patches/@clack__core@0.3.3.patch"
+    }
+  },
+  "release-it": {
+    "github": {
+      "release": true
     }
   }
 }
