@@ -101,6 +101,12 @@ const START_LIST: StartItem[] = [
     hint: 'Open wireless settings',
     cmd: '-a android.settings.WIRELESS_SETTINGS',
   },
+  {
+    value: 'miui-navigation-bar-type',
+    label: 'miui settings - navigation-bar-type',
+    hint: 'Open MIUI navigation bar type settings',
+    cmd: 'com.miui.home/com.miui.home.recents.settings.NavigationBarTypeActivity',
+  },
 ]
 
 async function startPackage(device: string | undefined, goBack: () => void) {
