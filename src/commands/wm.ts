@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import storage from 'node-persist'
-import { intro, isCancel, log, outro, select, text } from '@clack/prompts'
+import { isCancel, log, outro, select, text } from '@clack/prompts'
 import { adb, goBack, prompts2 } from '../utils'
 
 interface Config {

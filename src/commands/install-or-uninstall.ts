@@ -1,5 +1,7 @@
+import { info } from 'node:console'
+import { execSync } from 'node:child_process'
 import { isCancel, log, outro, select, spinner } from '@clack/prompts'
-import { adbAsync, getInstalledPackages, goBack, prompts2 } from '../utils'
+import { IS_MACOS, adbAsync, getInstalledPackages, goBack, prompts2 } from '../utils'
 
 export async function installOrUninstall(device: string | undefined) {
   const cancel = () => {
@@ -10,10 +12,15 @@ export async function installOrUninstall(device: string | undefined) {
   const selected = await select({
     message: 'select a command',
     options: [
+      IS_MACOS && {
+        value: 'install-picker',
+        label: 'install by file picker',
+        hint: 'install apk by file picker',
+      },
       {
-        value: 'install',
-        label: 'install',
-        hint: 'install apk',
+        value: 'install-path',
+        label: 'install by apk path',
+        hint: 'install apk by input apk path',
       },
       {
         value: 'uninstall',
@@ -25,12 +32,12 @@ export async function installOrUninstall(device: string | undefined) {
         label: 'back',
         hint: 'go back',
       },
-    ],
+    ].filter(Boolean) as any[],
   })
   if (isCancel(selected) || selected === 'back') {
     return goBack()
   }
-  if (selected === 'install') {
+  if (selected === 'install-path') {
     const { value, cancelled } = await prompts2({
       type: 'text',
       name: 'value',
@@ -49,6 +56,19 @@ export async function installOrUninstall(device: string | undefined) {
     const s = spinner()
     s.start(`installing ${filename}`)
     await adbAsync(`install -r ${value}`, device)
+    s.stop(`installed ${filename}`)
+  } else if (selected === 'install-picker') {
+    // eslint-disable-next-line style/max-len
+    const pickResult = await execSync(`osascript -l JavaScript -e 'a=Application.currentApplication();a.includeStandardAdditions=true;a.chooseFile({withPrompt:"Please select a file to process: ", ofType:["apk"]}).toString()'`)
+    info(pickResult.toString())
+    if (!pickResult) {
+      outro('no file selected')
+    }
+    const path = pickResult.toString().trim()
+    const filename = path.split('/').pop()
+    const s = spinner()
+    s.start(`installing ${filename}`)
+    await adbAsync(`install -r ${path}`, device)
     s.stop(`installed ${filename}`)
   } else if (selected === 'uninstall') {
     const packages = getInstalledPackages(device, true)

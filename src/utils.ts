@@ -1,6 +1,9 @@
+import process from 'node:process'
 import { exec, execSync } from 'node:child_process'
 import { isCancel, note, select } from '@clack/prompts'
 import prompts from 'prompts'
+
+export const IS_MACOS = process.platform === 'darwin'
 
 export const ctx = {
   goBack: () => {},
