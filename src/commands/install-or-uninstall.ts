@@ -1,4 +1,3 @@
-import { info } from 'node:console'
 import { execSync } from 'node:child_process'
 import { isCancel, log, outro, select, spinner } from '@clack/prompts'
 import { IS_MACOS, adbAsync, getInstalledPackages, goBack, prompts2 } from '../utils'
@@ -58,11 +57,19 @@ export async function installOrUninstall(device: string | undefined) {
     await adbAsync(`install -r ${value}`, device)
     s.stop(`installed ${filename}`)
   } else if (selected === 'install-picker') {
-    // eslint-disable-next-line style/max-len
-    const pickResult = await execSync(`osascript -l JavaScript -e 'a=Application.currentApplication();a.includeStandardAdditions=true;a.chooseFile({withPrompt:"Please select a file to process: ", ofType:["apk"]}).toString()'`)
-    info(pickResult.toString())
+    let pickResult: string | undefined
+    try {
+      pickResult = execSync(
+        // eslint-disable-next-line style/max-len
+        `osascript -l JavaScript -e 'a=Application.currentApplication();a.includeStandardAdditions=true;a.chooseFile({withPrompt:"Please select a file to process: ", ofType:["apk"]}).toString()'`,
+      )
+        .toString()
+    } catch (_) {
+      log.error('file picker error')
+    }
     if (!pickResult) {
       outro('no file selected')
+      return
     }
     const path = pickResult.toString().trim()
     const filename = path.split('/').pop()
