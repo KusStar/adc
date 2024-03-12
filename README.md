@@ -39,7 +39,7 @@ Example:
 ## Development
 
 ```bash
-git clone ...
+git clone https://github.com/KusStar/adc
 
 cd adc
 
