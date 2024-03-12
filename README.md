@@ -47,6 +47,7 @@ cd adc
 pnpm install
 
 pnpm dev
+# or pnpm build
 
 npm i -g .
 
